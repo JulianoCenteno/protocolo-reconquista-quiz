@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Protocolo de la Reconquista — Misión</title>
+<meta name="description" content="Descubre tu Protocolo de la Reconquista personalizado.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet">
+<!--
+  ⚙️ PIXELS / UTMIFY: cola aquí tus scripts de Facebook Pixel y UTMify
+  (los mismos que ya usas). El quiz dispara eventos automáticamente:
+  fbq('trackCustom','QuizStep',{step}) en cada etapa y
+  fbq('track','InitiateCheckout') al hacer clic en el checkout.
+-->
+<style>
+:root{
+  --bg:#09090b; --bg2:#111114; --card:#16161a; --line:#26262c;
+  --txt:#fafafa; --mute:#a1a1aa; --dim:#71717a;
+  --red:#ef4444; --red2:#dc2626; --redglow:rgba(239,68,68,.35);
+  --gold:#fbbf24; --gold2:#f59e0b;
+  --green:#22c55e; --green2:#16a34a; --green3:#15803d;
+  --r:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--txt);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.45}
+body{min-height:100vh;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(600px 400px at 50% -120px,rgba(239,68,68,.18),transparent 70%),
+             radial-gradient(500px 300px at 100% 110%,rgba(251,191,36,.06),transparent 70%)}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+img{max-width:100%;display:block}
+.app{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:0 16px 48px}
+
+/* ---------- HUD ---------- */
+.hud{position:sticky;top:0;z-index:20;padding:12px 0 10px;background:linear-gradient(var(--bg) 70%,transparent)}
+.hud-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:8px;font-family:"Bricolage Grotesque",Inter,sans-serif;font-weight:800;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+.brand img{width:30px;height:30px;border-radius:8px;object-fit:cover}
+.brand .dot{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--red),#7f1d1d);display:grid;place-items:center;font-size:15px}
+.chips{display:flex;gap:6px;align-items:center}
+.chip{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:12px;font-weight:700;white-space:nowrap}
+.chip.xp{color:var(--gold);border-color:rgba(251,191,36,.35)}
+.chip.xp.bump{animation:bump .5s}
+.mute{width:30px;height:30px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:13px;display:grid;place-items:center}
+.map{display:flex;align-items:center;margin-top:12px;gap:0}
+.node{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:11px;font-weight:800;background:var(--card);border:2px solid var(--line);color:var(--dim);transition:.35s}
+.node.done{background:var(--red);border-color:var(--red);color:#fff}
+.node.now{border-color:var(--red);color:#fff;box-shadow:0 0 0 4px var(--redglow);animation:pulse 1.6s infinite}
+.node.chest{font-size:13px}
+.link{flex:1;height:4px;background:var(--line);position:relative;overflow:hidden}
+.link i{position:absolute;inset:0;width:0;background:var(--red);transition:width .5s}
+.hud.hide{display:none}
+
+/* ---------- Screens ---------- */
+.screen{display:none;padding-top:14px;animation:in .45s cubic-bezier(.2,.8,.2,1)}
+.screen.on{display:block}
+.kicker{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--red);background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);padding:5px 10px;border-radius:999px}
+.kicker.gold{color:var(--gold);background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.3)}
+h1,h2{font-family:"Bricolage Grotesque",Inter,sans-serif;letter-spacing:-.01em;line-height:1.12}
+h1{font-size:30px;font-weight:800;margin:14px 0 10px}
+h2{font-size:23px;font-weight:800;margin:12px 0 8px}
+.hl{color:var(--red)}
+.u{text-decoration:underline;text-decoration-color:var(--red);text-underline-offset:3px}
+.sub{color:var(--mute);font-size:15px}
+.center{text-align:center}
+.qmeta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--dim);font-weight:600;margin-bottom:2px}
+.qmeta b{color:var(--gold)}
+
+/* options */
+.opts{display:grid;gap:10px;margin-top:18px}
+.opt{position:relative;display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:15px 16px;border-radius:var(--r);background:linear-gradient(180deg,rgba(239,68,68,.09),rgba(239,68,68,.04));border:1.5px solid rgba(239,68,68,.28);font-size:15px;font-weight:600;transition:transform .12s,border-color .2s,background .2s;overflow:hidden}
+.opt:hover{border-color:rgba(239,68,68,.6)}
+.opt:active{transform:scale(.98)}
+.opt .em{font-size:22px;flex:none;width:30px;text-align:center}
+.opt .tx{flex:1}
+.opt .xpb{flex:none;font-size:11px;font-weight:800;color:var(--gold);opacity:.75}
+.opt.pick{border-color:var(--red);background:rgba(239,68,68,.22);animation:pickPop .35s}
+.opt.pick .xpb{opacity:1}
+.opt.fade{opacity:.35}
+.opt::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-20deg)}
+.opt.pick::after{animation:shine .6s}
+.opts.yn{grid-template-columns:1fr 1fr}
+.opts.yn .opt{justify-content:center;font-size:17px;padding:18px}
+
+/* image grid */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.card-opt{border-radius:var(--r);overflow:hidden;background:var(--card);border:1.5px solid var(--line);text-align:left;transition:.2s}
+.card-opt .ph{aspect-ratio:1/1;position:relative;background:radial-gradient(circle at 50% 40%,#2a1515,#120c0c);display:grid;place-items:center;font-size:44px}
+.card-opt .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.card-opt .cap{padding:10px 11px 12px;font-size:13px;font-weight:600;line-height:1.3}
+.card-opt.pick{border-color:var(--red);box-shadow:0 0 0 3px var(--redglow);animation:pickPop .35s}
+.card-opt.fade{opacity:.35}
+
+/* buttons */
+.cta{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:18px 18px;border-radius:14px;font-weight:900;font-size:16px;letter-spacing:.01em;text-transform:uppercase;color:#fff;text-decoration:none;text-align:center;
+  background:linear-gradient(180deg,var(--green) 0%,var(--green2) 55%,var(--green3) 100%);box-shadow:0 6px 0 #14532d,0 12px 30px rgba(34,197,94,.3);transition:transform .1s,box-shadow .1s;margin-top:18px;position:relative;overflow:hidden}
+.cta:active{transform:translateY(4px);box-shadow:0 2px 0 #14532d,0 6px 16px rgba(34,197,94,.3)}
+.cta.pulse{animation:ctaPulse 1.8s infinite}
+.cta.red{background:linear-gradient(180deg,#f87171,var(--red) 50%,var(--red2));box-shadow:0 6px 0 #7f1d1d,0 12px 30px rgba(239,68,68,.3)}
+.cta::after{content:"";position:absolute;top:0;left:-60%;width:35%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);transform:skewX(-20deg);animation:shine 2.8s infinite}
+.safe{display:flex;gap:8px;align-items:flex-start;justify-content:center;margin-top:16px;font-size:12px;color:var(--green);text-align:center}
+
+/* panels */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-top:16px}
+.panel.glow{border-color:rgba(239,68,68,.4);box-shadow:0 0 40px rgba(239,68,68,.12)}
+.panel.gold{border-color:rgba(251,191,36,.35);box-shadow:0 0 40px rgba(251,191,36,.08)}
+.panel p+p{margin-top:10px}
+.panel p{font-size:15px;color:#e4e4e7}
+
+/* intro hero */
+.hero-badge{width:96px;height:96px;margin:16px auto 0;border-radius:28px;display:grid;place-items:center;font-size:46px;background:radial-gradient(circle at 30% 25%,#f87171,#991b1b);box-shadow:0 0 0 6px rgba(239,68,68,.12),0 0 60px rgba(239,68,68,.45);animation:float 3s ease-in-out infinite}
+.perks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}
+.perk{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center;font-size:11px;color:var(--mute);font-weight:600}
+.perk b{display:block;font-size:20px;margin-bottom:2px}
+
+/* analyzing */
+.ring{width:170px;height:170px;margin:26px auto 10px;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;font-family:"Bricolage Grotesque",sans-serif;font-size:42px;font-weight:800}
+.checks{display:grid;gap:10px;margin-top:18px}
+.check{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--dim);transition:.3s}
+.check .bx{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;flex:none;transition:.3s}
+.check.ok{color:var(--txt)}
+.check.ok .bx{background:var(--green);border-color:var(--green)}
+.check.run .bx{border-color:var(--red);border-top-color:transparent;animation:spin .8s linear infinite}
+.counter{margin-top:22px;text-align:center;font-size:14px;color:var(--mute)}
+.counter b{color:var(--txt);font-size:18px}
+
+/* result */
+.gauge{position:relative;width:240px;height:140px;margin:14px auto 0}
+.gauge .num{position:absolute;left:0;right:0;bottom:6px;text-align:center;font-family:"Bricolage Grotesque",sans-serif;font-size:50px;font-weight:800;line-height:1}
+.gauge .num small{font-size:22px}
+.gauge .lab{position:absolute;left:0;right:0;bottom:-16px;text-align:center;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green)}
+.profile{display:flex;gap:14px;align-items:center}
+.profile .av{width:58px;height:58px;border-radius:16px;flex:none;display:grid;place-items:center;font-size:30px;background:linear-gradient(135deg,#3f1d1d,#1c1010);border:1px solid rgba(239,68,68,.4)}
+.profile .t small{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--red);text-transform:uppercase}
+.profile .t div{font-family:"Bricolage Grotesque",sans-serif;font-size:21px;font-weight:800;line-height:1.1}
+.stats{display:grid;gap:10px;margin-top:14px}
+.stat .row{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:5px}
+.stat .bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.stat .bar i{display:block;height:100%;width:0;border-radius:99px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.expert{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+.expert .ph{width:56px;height:56px;border-radius:50%;overflow:hidden;flex:none;background:linear-gradient(135deg,#ef4444,#7f1d1d);display:grid;place-items:center;font-size:24px;border:2px solid var(--red);position:relative}
+.expert .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.expert b{display:block;font-size:15px}
+.expert span{font-size:12px;color:var(--mute)}
+
+/* testimonials carousel */
+.car{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 10px;margin:14px -16px 0;padding-left:16px;scrollbar-width:none}
+.car::-webkit-scrollbar{display:none}
+.car .sl{flex:0 0 78%;scroll-snap-align:center;border-radius:14px;overflow:hidden;background:var(--card);border:1px solid var(--line);min-height:240px;position:relative;display:grid;place-items:center}
+.car .sl img{width:100%;height:auto}
+.car .sl .miss{padding:20px;text-align:center;color:var(--dim);font-size:13px}
+.car .sl .miss b{display:block;font-size:30px;margin-bottom:6px}
+.dots{display:flex;justify-content:center;gap:6px}
+.dots i{width:6px;height:6px;border-radius:9px;background:var(--line);transition:.3s}
+.dots i.on{width:18px;background:var(--red)}
+
+/* chest */
+.chest-wrap{text-align:center;margin-top:16px}
+.chest{font-size:110px;line-height:1;display:inline-block;filter:drop-shadow(0 0 30px rgba(251,191,36,.45));transition:transform .15s;user-select:none}
+.chest.shake{animation:shake .45s}
+.chest.open{animation:openChest .6s forwards}
+.taps{display:flex;justify-content:center;gap:8px;margin-top:14px}
+.taps i{width:38px;height:6px;border-radius:9px;background:var(--line);transition:.3s}
+.taps i.on{background:var(--gold);box-shadow:0 0 10px var(--gold)}
+.loot{display:grid;gap:10px;margin-top:18px}
+.lootc{display:flex;gap:12px;align-items:center;padding:12px;border-radius:14px;background:linear-gradient(90deg,rgba(251,191,36,.1),rgba(251,191,36,.02));border:1px solid rgba(251,191,36,.3);text-align:left;opacity:0;transform:translateY(14px) scale(.96);transition:.45s cubic-bezier(.2,.8,.2,1)}
+.lootc.show{opacity:1;transform:none}
+.lootc .ic{width:52px;height:52px;border-radius:12px;flex:none;background:#1f1a0e;display:grid;place-items:center;font-size:26px;overflow:hidden;position:relative}
+.lootc .ic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.lootc b{display:block;font-size:14px;line-height:1.25}
+.lootc s{color:var(--dim);font-size:12px}
+.lootc em{font-style:normal;color:var(--green);font-weight:800;font-size:12px;margin-left:4px}
+.total{margin-top:16px;font-size:14px;color:var(--mute);text-align:center}
+.total b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:40px;color:var(--gold);line-height:1.1}
+
+/* offer */
+.video{aspect-ratio:9/16;max-height:520px;width:100%;border-radius:var(--r);overflow:hidden;background:#000;border:1px solid var(--line);display:grid;place-items:center;margin-top:14px;position:relative}
+.video .ph{text-align:center;color:var(--dim);font-size:13px}
+.video .ph b{display:grid;place-items:center;width:70px;height:70px;border-radius:50%;background:var(--red);color:#fff;font-size:26px;margin:0 auto 10px;box-shadow:0 0 0 10px rgba(239,68,68,.15)}
+.video iframe,.video video{position:absolute;inset:0;width:100%;height:100%;border:0}
+.tl{position:relative;margin-top:6px;padding-left:28px}
+.tl::before{content:"";position:absolute;left:10px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--red),var(--green))}
+.tli{position:relative;padding:8px 0}
+.tli::before{content:"";position:absolute;left:-23px;top:13px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--red)}
+.tli:last-child::before{border-color:var(--green);background:var(--green)}
+.tli b{font-size:13px;color:var(--gold);text-transform:uppercase;letter-spacing:.06em}
+.tli p{font-size:14px;margin-top:2px}
+.list{list-style:none;display:grid;gap:9px;margin-top:10px}
+.list li{display:flex;gap:10px;font-size:14px;align-items:flex-start}
+.list li::before{content:"✓";flex:none;width:20px;height:20px;border-radius:50%;background:rgba(34,197,94,.15);color:var(--green);font-weight:900;font-size:12px;display:grid;place-items:center;margin-top:1px}
+.bonus{display:flex;gap:12px;padding:14px 0;border-top:1px dashed var(--line)}
+.bonus:first-of-type{border-top:0}
+.bonus .ic{width:64px;height:64px;border-radius:12px;flex:none;background:#1f1a0e;display:grid;place-items:center;font-size:28px;overflow:hidden;position:relative;border:1px solid rgba(251,191,36,.3)}
+.bonus .ic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.bonus .tag{display:inline-block;font-size:10px;font-weight:900;letter-spacing:.08em;color:#111;background:var(--gold);padding:2px 7px;border-radius:5px;margin-bottom:4px}
+.bonus b{display:block;font-size:15px;line-height:1.25}
+.bonus .pr{font-size:12px;color:var(--dim);margin:2px 0 4px}
+.bonus .pr em{font-style:normal;color:var(--green);font-weight:800}
+.bonus p{font-size:13px;color:var(--mute)}
+.price{text-align:center;padding:22px 18px;border-radius:20px;margin-top:16px;background:linear-gradient(180deg,#14140f,#0e0e10);border:2px solid var(--green);box-shadow:0 0 50px rgba(34,197,94,.15);position:relative}
+.price .rib{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--green);color:#052e16;font-size:11px;font-weight:900;letter-spacing:.08em;padding:5px 12px;border-radius:999px;white-space:nowrap}
+.price .old{color:var(--dim);text-decoration:line-through;font-size:18px;font-weight:700}
+.price .new{font-family:"Bricolage Grotesque",sans-serif;font-size:58px;font-weight:800;line-height:1;margin:4px 0;color:var(--green)}
+.price .what{font-weight:700;font-size:15px}
+.price .once{font-size:11px;color:var(--mute);font-weight:700;letter-spacing:.05em;margin-top:6px}
+.guar{display:flex;gap:14px;align-items:center}
+.guar .seal{width:74px;height:74px;flex:none;border-radius:50%;display:grid;place-items:center;text-align:center;font-weight:900;font-size:11px;line-height:1.1;color:#111;background:radial-gradient(circle,var(--gold),var(--gold2));box-shadow:0 0 0 4px rgba(251,191,36,.2)}
+.guar .seal b{display:block;font-size:24px}
+.faq{border-top:1px solid var(--line)}
+.faq:first-of-type{border-top:0}
+.faq button{display:flex;justify-content:space-between;width:100%;text-align:left;padding:14px 0;font-weight:700;font-size:14px;gap:10px}
+.faq button span{color:var(--red);transition:.25s;flex:none}
+.faq.open button span{transform:rotate(45deg)}
+.faq .a{max-height:0;overflow:hidden;transition:max-height .35s;font-size:14px;color:var(--mute)}
+.faq.open .a{max-height:200px;padding-bottom:14px}
+.for{display:grid;gap:10px;margin-top:10px}
+.for div{padding:12px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);font-size:13px;color:var(--mute)}
+.for b{display:block;color:var(--txt);font-size:14px;margin-bottom:2px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}
+.badges span{font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);color:var(--gold)}
+.foot{margin-top:28px;text-align:center;font-size:11px;color:var(--dim)}
+.sticky{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--bg) 35%);transform:translateY(110%);visibility:hidden;transition:transform .35s,visibility .35s}
+.sticky.show{transform:none;visibility:visible}
+.sticky .cta{max-width:448px;margin:0 auto;padding:15px;font-size:14px}
+
+/* toasts & fx */
+.toast{position:fixed;left:50%;top:14px;z-index:60;transform:translate(-50%,-140%);display:flex;gap:10px;align-items:center;padding:10px 16px 10px 10px;border-radius:14px;background:#1a1408;border:1px solid var(--gold);box-shadow:0 10px 40px rgba(0,0,0,.6),0 0 30px rgba(251,191,36,.25);transition:transform .45s cubic-bezier(.2,1.4,.4,1);max-width:92vw}
+.toast.show{transform:translate(-50%,0)}
+.toast .i{width:38px;height:38px;border-radius:10px;background:radial-gradient(circle,var(--gold),var(--gold2));display:grid;place-items:center;font-size:20px;flex:none}
+.toast small{display:block;font-size:10px;font-weight:900;letter-spacing:.12em;color:var(--gold);text-transform:uppercase}
+.toast b{font-size:14px}
+.float-xp{position:fixed;z-index:55;pointer-events:none;font-weight:900;color:var(--gold);font-size:18px;text-shadow:0 0 12px rgba(251,191,36,.7);animation:floatUp 1s forwards}
+.lvl{position:fixed;inset:0;z-index:58;display:grid;place-items:center;pointer-events:none;opacity:0;transition:opacity .25s}
+.lvl.show{opacity:1}
+.lvl div{text-align:center;transform:scale(.6);transition:transform .45s cubic-bezier(.2,1.6,.4,1)}
+.lvl.show div{transform:scale(1)}
+.lvl small{display:block;font-size:12px;font-weight:900;letter-spacing:.3em;color:var(--gold)}
+.lvl b{font-family:"Bricolage Grotesque",sans-serif;font-size:64px;font-weight:800;text-shadow:0 0 40px rgba(239,68,68,.8)}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:57}
+
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(239,68,68,.08)}}
+@keyframes bump{40%{transform:scale(1.18)}}
+@keyframes pickPop{40%{transform:scale(1.03)}}
+@keyframes shine{to{left:130%}}
+@keyframes ctaPulse{50%{transform:scale(1.025)}}
+@keyframes float{50%{transform:translateY(-8px) rotate(-3deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shake{20%{transform:rotate(-12deg) scale(1.05)}40%{transform:rotate(10deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(5deg)}}
+@keyframes openChest{0%{transform:scale(1)}40%{transform:scale(1.35) rotate(-6deg)}100%{transform:scale(.85);opacity:.9}}
+@keyframes floatUp{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-60px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="toast" id="toast"><div class="i" id="toastI">🏆</div><div><small>Logro desbloqueado</small><b id="toastT"></b></div></div>
+<div class="lvl" id="lvl"><div><small>NIVEL</small><b id="lvlN">2</b></div></div>
+
+<div class="app">
+  <header class="hud hide" id="hud">
+    <div class="hud-row">
+      <div class="brand" id="brand"></div>
+      <div class="chips">
+        <div class="chip xp" id="xpChip">⚡ <span id="xp">0</span> XP</div>
+        <div class="chip" id="lvChip">Nv <span id="lv">1</span>/6</div>
+        <button class="mute" id="mute" aria-label="Sonido">🔊</button>
+      </div>
+    </div>
+    <div class="map" id="map"></div>
+  </header>
+  <main id="screens"></main>
+</div>
+
+<div class="sticky" id="sticky"><a class="cta pulse" data-checkout>¡Quiero mi protocolo — <span data-price></span>!</a></div>
+
+<script>
+/* =====================================================================
+   ⚙️ CONFIG — edita aquí textos, imágenes, links y precios
+   Las imágenes usan las rutas de tu sitio actual. Si una imagen no
+   carga, se muestra un emoji de respaldo.
+   ===================================================================== */
+const CONFIG = {
+  brand: "Protocolo de la Reconquista",
+  logo: "/images/site/logo.webp",
+  checkoutUrl: "https://pay.kiwify.com/9H0h1AJ",   // se le añaden las UTMs de la URL automáticamente
+  priceOld: "$297",
+  price: "$19,90",
+  socialCount: 5732,
+  // Video de ventas (VSL): pega aquí el <iframe> o <video> de tu player (vturb, panda, youtube...)
+  vslEmbed: "",
+  // Segundos de vídeo antes de mostrar a oferta (0 = mostrar todo de inmediato)
+  revealDelaySec: 0,
+  expert: {
+    name: "Valeria Rodríguez",
+    role: "Especialista en relaciones",
+    photo: "/images/quiz-source/expert-instagram-card.webp",
+  },
+  painImages: [
+    "/images/quiz-source/soledad-v2.webp",
+    "/images/quiz-source/LPuY6-245.webp",
+    "/images/quiz-source/miedo-v2.webp",
+    "/images/quiz-source/DPlPw-2.webp",
+  ],
+  // Prints REALES de clientes (los mismos que ya tienes)
+  testimonialImages: [
+    "/images/quiz-source/dep0.webp","/images/quiz-source/dep1.webp","/images/quiz-source/dep2.webp",
+    "/images/quiz-source/dep3.webp","/images/quiz-source/dep4.webp","/images/quiz-source/dep5.webp",
+    "/images/quiz-source/dep6.webp",
+  ],
+  bonusImages: [
+    "/images/quiz-source/BONO 1 - PR.webp","/images/quiz-source/BONO 2 - PR.webp","/images/quiz-source/BONO 3 - PR.webp",
+    "/images/quiz-source/BONO 4 - PR.webp","/images/quiz-source/BONO 5 - PR.webp","/images/quiz-source/BONO 6 - PR.webp",
+    "/images/quiz-source/REGALO SORPRESA - PR.webp",
+  ],
+  mockup: "/images/quiz-source/mockup.webp",
+};
+
+const BONUSES = [
+  {e:"💬",t:"Guía de Mensajes Estratégicos",v:27,d:"Mensajes listos para hablarle de la manera correcta, sin parecer desesperado, y saber cómo llevar la conversación de la mejor forma posible."},
+  {e:"🔓",t:"Cómo Retomar el Contacto Incluso Bloqueado",v:17,d:"Cómo retomar el contacto, aunque estés bloqueado en todas las redes sociales."},
+  {e:"👀",t:"Cómo Leer las Señales de Interés",v:37,d:"Cómo leer sus señales emocionales para saber el momento exacto de avanzar, sin quemar tu oportunidad."},
+  {e:"⚠️",t:"Errores que Matan la Reconquista",v:37,d:"Cosas que parecen inofensivas, pero que destruyen cualquier oportunidad."},
+  {e:"💪",t:"Transformación Masculina",v:35,d:"Una guía de transformación que va a hacer que ella piense: \"¿Cómo pude dejarlo ir?\""},
+  {e:"🔥",t:"Cómo Hacerla Sexualmente Obsesionada Contigo",v:47,d:"Secretos para el toque, el beso y la intimidad que despiertan pasión y deseo."},
+  {e:"🎁",t:"Regalo Sorpresa",v:97,d:"No es un libro. No es un curso. No es nada de lo que estás pensando. Quienes ya lo recibieron dicen que vale tanto como todos los bonos juntos."},
+];
+
+const DELIVERABLES = [
+  "App Protocolo de la Reconquista: protocolo personalizado en lecciones prácticas en vídeo",
+  "Ruta Infalible de 15 Días","El Mensaje Restaurador","Técnica del Magnetismo",
+  "Frases Hipnóticas para el Encuentro","El Truco de los Celos Indirectos","Mensajes de Deseo Oculto",
+  "La Disculpa Invisible","Las 6 Palabras Prohibidas","El Truco del Misterio Irresistible",
+];
+
+const FAQ = [
+  ["¿El protocolo realmente funciona para cualquier situación de reconquista?","Sí, ofrece estrategias adaptables para todo tipo de reconquista, ya sea tu novia, esposa..."],
+  ["¿Cómo puedo aplicar los consejos si mi ex ya está con otra persona?","Enseñan a crear atracción emocional, enfocándose en lo psicológico de la otra persona, para que sienta el deseo de volver."],
+  ["¿Cuánto tiempo se tarda en ver resultados?","Los resultados varían, pero puedes empezar a notar cambios en los primeros días si sigues el plan correctamente."],
+  ["¿Puedo usar las estrategias sin tener contacto con mi ex?","El protocolo incluye tácticas de reaproximación gradual para evitar parecer desesperado."],
+  ["¿Y si no consigo reconquistar a mi ex?","Aunque el protocolo ofrece las mejores prácticas, cada situación es única. Te ayuda a afrontar la reconquista de una manera saludable."],
+  ["¿Y si mi ex me ignora?","Las video-aulas enseñan cómo lidiar con el silencio y reconquistar su atención de forma estratégica."],
+  ["¿Cómo hago para acceder al protocolo después de la compra?","Después de la confirmación del pago, recibirás un email con tu login para acceder a nuestra aplicación exclusiva."],
+  ["¿Y si tengo dudas durante el curso?","¡Tendrás soporte directo para resolver todas tus dudas y garantizar tu aprendizaje!"],
+];
+
+/* ===================== QUIZ FLOW ===================== */
+// level: nodo del mapa al que pertenece la etapa
+const STEPS = [
+  {id:"intro", type:"intro"},
+  {id:"tiempo", type:"q", level:1, xp:50,
+   title:'¿Cuánto tiempo ha pasado desde que terminó su <span class="hl">comunicación constante</span>?',
+   pre:"🔍 Con base en tus respuestas, vamos a crear tu Protocolo Personalizado",
+   opts:[["⚡","Menos de una semana"],["📅","Entre 1 y 4 semanas"],["🗓️","Entre 1 y 3 meses"],["⏳","Más de 3 meses"]],
+   badge:["🏁","Primer paso dado"]},
+  {id:"motivo", type:"q", level:2, xp:60,
+   title:'¿Por qué <span class="hl">ella</span> terminó contigo?',
+   opts:[["🌪️","Tuvimos muchas peleas y la relación se fue desgastando"],["💥","Cometí un error grave: una infidelidad o una mentira"],["🧊","Ella dijo que ya no sentía lo mismo por mí"],["❓","No sé con certeza, simplemente se fue"],["🔙","Fui yo quien terminó, pero me arrepentí"]]},
+  {id:"dolor", type:"grid", level:3, xp:70,
+   title:'¿Qué es lo que te está <span class="hl">destruyendo por dentro</span> desde la ruptura?',
+   opts:[["🌑","La soledad y el enorme vacío que ella dejó"],["😣","Saber que yo podría haber evitado todo esto"],["😰","El miedo de que ella ya esté con otro hombre"],["💔","Imaginar que ella está feliz y siguió adelante sin mí"]],
+   badge:["🧠","Autoconocimiento"]},
+  {id:"miedo", type:"q", level:4, xp:80,
+   title:'Si no actúas ahora, ¿qué crees que <span class="hl">va a pasar</span>?',
+   opts:[["😔","Ella va a olvidar todo lo que vivimos juntos"],["💔","Ella se va a enamorar de otro y nunca más me va a mirar"],["⏳","El tiempo va a pasar y la ventana se va a cerrar para siempre"],["😫","No sé, y ese es exactamente mi mayor miedo"]],
+   badge:["🔥","Valentía: enfrentaste tu miedo"]},
+  {id:"analisis", type:"analyze", level:4},
+  {id:"resultado", type:"result", level:4},
+  {id:"deseo", type:"q", level:5, xp:90,
+   title:'Además de los mensajes y tu protocolo, ¿quieres que te muestre cómo hacer que ella sienta un <span class="hl">deseo incontrolable de volver</span>?',
+   opts:[["❤️‍🔥","Sí, quiero que ella de verdad sienta mi falta"],["🚀","Sí, pero quiero algo directo y que funcione rápido"]]},
+  {id:"prueba", type:"proof", level:5},
+  {id:"compromiso", type:"q", level:6, xp:100,
+   title:'¿Te gustaría ver, en un vídeo de 3 minutos, el <span class="hl">paso a paso exacto</span> para que ella vuelva en los próximos días?',
+   pre:"Última pregunta: ¿te comprometes a verlo hasta el final y aplicarlo hoy?",
+   opts:[["✅","Sí, quiero verlo y aplicarlo ahora mismo"],["🤔","Sí, pero quiero entender mejor cómo funciona"]],
+   badge:["🎯","Comprometido con la misión"]},
+  {id:"creando", type:"build", level:6},
+  {id:"cofre", type:"chest", level:7},
+  {id:"oferta", type:"offer", level:7},
+];
+const LEVELS = 6; // + nodo cofre
+
+/* ===================== STATE ===================== */
+const S = {i:0, xp:0, ans:{}, sound:true, badges:[]};
+const $ = s=>document.querySelector(s);
+const el = (h)=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstElementChild};
+
+function checkoutHref(){
+  try{
+    const u=new URL(CONFIG.checkoutUrl); const p=new URLSearchParams(location.search);
+    p.forEach((v,k)=>u.searchParams.set(k,v)); return u.toString();
+  }catch(e){return CONFIG.checkoutUrl}
+}
+function track(ev,data){try{window.fbq&&fbq(ev==='checkout'?'track':'trackCustom',ev==='checkout'?'InitiateCheckout':'QuizStep',data||{})}catch(e){}}
+function img(src,fallback,cls){return `<img src="${encodeURI(src)}" alt="" ${cls?`class="${cls}"`:''} onerror="this.remove()">`+''}
+
+/* ---------- audio ---------- */
+let AC;
+function beep(f=660,d=.08,type='sine',v=.06){
+  if(!S.sound) return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.value=v;o.connect(g);g.connect(AC.destination);const t=AC.currentTime;g.gain.exponentialRampToValueAtTime(.0001,t+d);o.start(t);o.stop(t+d)}catch(e){}
+}
+function noise(d=.25,v=.05,from=1800,to=300){
+  if(!S.sound)return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const n=AC.sampleRate*d,b=AC.createBuffer(1,n,AC.sampleRate),c=b.getChannelData(0);for(let i=0;i<n;i++)c[i]=(Math.random()*2-1)*(1-i/n);
+  const src=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();src.buffer=b;f.type='bandpass';const t=AC.currentTime;f.frequency.setValueAtTime(from,t);f.frequency.exponentialRampToValueAtTime(to,t+d);g.gain.value=v;src.connect(f);f.connect(g);g.connect(AC.destination);src.start()}catch(e){}
+}
+const seq=(notes,gap=110,type='triangle',v=.07,d=.16)=>notes.forEach((f,i)=>setTimeout(()=>beep(f,d,type,v),i*gap));
+const sfx={pick:()=>{beep(520,.07);setTimeout(()=>beep(780,.09),70)},
+  badge:()=>[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.12,'triangle',.07),i*90)),
+  tap:()=>beep(300,.06,'square',.04), coin:()=>{beep(988,.05,'square',.04);setTimeout(()=>beep(1319,.12,'square',.04),50)},
+  whoosh:()=>noise(.28,.06,2400,400),
+  question:()=>{noise(.22,.05,2000,500);setTimeout(()=>seq([440,554],90,'sine',.05,.12),120)},
+  levelup:()=>seq([523,659,784,1046,1319],85,'square',.045,.18),
+  scan:()=>{for(let i=0;i<14;i++)setTimeout(()=>beep(880+(i%2)*220,.04,'sine',.03),i*280)},
+  reveal:()=>{noise(.5,.05,300,3000);setTimeout(()=>seq([392,523,659,784,1046],120,'triangle',.08,.3),350)},
+  proof:()=>seq([659,784,988],120,'sine',.06,.2),
+  forge:()=>{for(let i=0;i<8;i++)setTimeout(()=>{beep(180,.05,'square',.04);noise(.06,.04,3000,1500)},i*480)},
+  chest:()=>{noise(.3,.05,800,200);setTimeout(()=>seq([330,415,494],140,'triangle',.06,.2),200)},
+  open:()=>{noise(.6,.07,400,4000);seq([523,659,784,1046,1319,1568],70,'square',.05,.2)},
+  offer:()=>{seq([784,988,1175,1568],100,'triangle',.07,.25);setTimeout(()=>{beep(2093,.08,'square',.04);beep(2637,.2,'square',.03)},450)}};
+const SCREEN_SFX={q:'question',grid:'question',analyze:'scan',result:'reveal',proof:'proof',build:'forge',chest:'chest',offer:'offer'};
+$('#mute').onclick=()=>{S.sound=!S.sound;$('#mute').textContent=S.sound?'🔊':'🔇';sfx.pick()};
+
+/* ---------- confetti ---------- */
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[],raf;
+function resize(){cv.width=innerWidth*devicePixelRatio;cv.height=innerHeight*devicePixelRatio}
+addEventListener('resize',resize);resize();
+function confetti(n=90,x=innerWidth/2,y=innerHeight/3,colors=['#ef4444','#fbbf24','#22c55e','#fff']){
+  for(let k=0;k<n;k++)parts.push({x,y,vx:(Math.random()-.5)*12,vy:Math.random()*-12-3,s:Math.random()*6+3,c:colors[k%colors.length],r:Math.random()*6,vr:(Math.random()-.5)*.4,life:120});
+  if(!raf)loop();
+}
+function loop(){
+  cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);cx.clearRect(0,0,innerWidth,innerHeight);
+  parts=parts.filter(p=>p.life-->0);
+  parts.forEach(p=>{p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.globalAlpha=Math.min(1,p.life/40);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);cx.restore()});
+  raf=parts.length?requestAnimationFrame(loop):(cx.clearRect(0,0,innerWidth,innerHeight),null);
+}
+
+/* ---------- HUD ---------- */
+function buildHud(){
+  $('#brand').innerHTML=`<span class="dot" id="bdot">❤️</span>`+`<span>Misión<br>Reconquista</span>`;
+  const im=new Image();im.onload=()=>{$('#bdot').replaceWith(im)};im.src=CONFIG.logo;
+  const m=$('#map');m.innerHTML='';
+  for(let n=1;n<=LEVELS+1;n++){
+    if(n>1)m.appendChild(el('<div class="link"><i></i></div>'));
+    m.appendChild(el(`<div class="node ${n===LEVELS+1?'chest':''}" data-n="${n}">${n===LEVELS+1?'🎁':n}</div>`));
+  }
+}
+function setLevel(l){
+  document.querySelectorAll('.node').forEach(nd=>{const n=+nd.dataset.n;nd.classList.toggle('done',n<l);nd.classList.toggle('now',n===l)});
+  document.querySelectorAll('.link i').forEach((li,k)=>li.style.width=(k+2<=l?'100%':'0'));
+  $('#lv').textContent=Math.min(l,LEVELS);
+}
+function addXP(n,from){
+  const start=S.xp;S.xp+=n;const t0=performance.now();
+  (function tick(t){const k=Math.min(1,(t-t0)/600);$('#xp').textContent=Math.round(start+n*k);if(k<1)requestAnimationFrame(tick)})(t0);
+  $('#xpChip').classList.remove('bump');void $('#xpChip').offsetWidth;$('#xpChip').classList.add('bump');
+  if(from){const r=from.getBoundingClientRect();const f=el(`<div class="float-xp">+${n} XP</div>`);f.style.left=(r.right-80)+'px';f.style.top=(r.top)+'px';document.body.appendChild(f);setTimeout(()=>f.remove(),1000)}
+}
+let toastQ=Promise.resolve();
+function badge(icon,text){
+  S.badges.push(icon+' '+text);
+  toastQ=toastQ.then(()=>new Promise(res=>{
+    $('#toastI').textContent=icon;$('#toastT').textContent=text;$('#toast').classList.add('show');sfx.badge();
+    setTimeout(()=>{$('#toast').classList.remove('show');setTimeout(res,350)},2100);
+  }));
+}
+function levelUp(n){
+  $('#lvlN').textContent=n;$('#lvl').classList.add('show');confetti(60);sfx.levelup();
+  setTimeout(()=>$('#lvl').classList.remove('show'),900);
+}
+
+/* ---------- navigation ---------- */
+function go(i){
+  S.i=i;const st=STEPS[i];const box=$('#screens');box.innerHTML='';
+  $('#hud').classList.toggle('hide',st.type==='intro');
+  $('#sticky').classList.remove('show');
+  let lvlUp=false;
+  if(st.level){const prev=STEPS[i-1]&&STEPS[i-1].level; setLevel(st.level); if(prev&&st.level>prev&&st.level<=LEVELS){levelUp(st.level);lvlUp=true}}
+  if(SCREEN_SFX[st.type]) setTimeout(()=>sfx[SCREEN_SFX[st.type]](), lvlUp?650:0);
+  const node=R[st.type](st,i);node.classList.add('screen','on');box.appendChild(node);
+  scrollTo({top:0,behavior:'instant'});track('step',{step:st.id});
+}
+const next=()=>go(S.i+1);
+
+/* ---------- answer handling ---------- */
+function onPick(st,btn,idx,all){
+  if(btn.dataset.lock)return;all.forEach(b=>{b.dataset.lock=1;if(b!==btn)b.classList.add('fade')});
+  btn.classList.add('pick');sfx.pick();
+  S.ans[st.id]=idx;addXP(st.xp||40,btn);
+  if(st.badge)badge(...st.badge);
+  setTimeout(next,750);
+}
+
+/* ===================== RENDERERS ===================== */
+const R={
+intro(){
+  const n=el(`<section class="center">
+    <div class="hero-badge">❤️‍🔥</div>
+    <div style="margin-top:18px"><span class="kicker">🎮 Misión Reconquista · 6 niveles</span></div>
+    <h1>¿Quieres saber qué es lo que <span class="hl">ella realmente quiere</span> para volver contigo… pero que <span class="u">nunca va a admitir</span>?</h1>
+    <p class="sub">Responde 6 preguntas rápidas, sube de nivel y desbloquea tu <b style="color:#fff">Protocolo Personalizado</b> + un cofre con 7 recompensas.</p>
+    <div class="perks">
+      <div class="perk"><b>⏱️</b>2 minutos</div>
+      <div class="perk"><b>🧩</b>Diagnóstico personal</div>
+      <div class="perk"><b>🎁</b>7 recompensas</div>
+    </div>
+    <div class="opts yn"><button class="opt"><span class="tx">👍 Sí</span></button><button class="opt"><span class="tx">👎 No</span></button></div>
+    <p class="safe">🔒 Tus respuestas son anónimas y totalmente confidenciales.</p>
+    <p class="counter" style="margin-top:6px;font-size:12px">🔊 Sube el volumen: esta experiencia tiene sonido</p>
+    <p class="counter" style="margin-top:10px">🔥 <b>${CONFIG.socialCount.toLocaleString('de-DE')}</b> hombres ya completaron la misión</p>
+  </section>`);
+  n.querySelectorAll('.opt').forEach((b,k)=>b.onclick=()=>{S.ans.intro=k;b.classList.add('pick');sfx.pick();sfx.whoosh();buildHud();$('#hud').classList.remove('hide');addXP(25);setTimeout(next,450)});
+  return n;
+},
+q(st){
+  const n=el(`<section>
+    <div class="qmeta"><span>NIVEL ${st.level} DE ${LEVELS}</span><span>Recompensa: <b>+${st.xp} XP</b></span></div>
+    ${st.pre?`<p class="sub" style="margin-top:10px">${st.pre}</p>`:''}
+    <h2>${st.title}</h2>
+    <div class="opts">${st.opts.map(([e,t])=>`<button class="opt"><span class="em">${e}</span><span class="tx">${t}</span><span class="xpb">+${st.xp}</span></button>`).join('')}</div>
+  </section>`);
+  const all=[...n.querySelectorAll('.opt')];all.forEach((b,k)=>b.onclick=()=>onPick(st,b,k,all));
+  return n;
+},
+grid(st){
+  const n=el(`<section>
+    <div class="qmeta"><span>NIVEL ${st.level} DE ${LEVELS}</span><span>Recompensa: <b>+${st.xp} XP</b></span></div>
+    <h2>${st.title}</h2>
+    <div class="grid">${st.opts.map(([e,t],k)=>`<button class="card-opt"><div class="ph">${e}${img(CONFIG.painImages[k]||'')}</div><div class="cap">${t}</div></button>`).join('')}</div>
+  </section>`);
+  const all=[...n.querySelectorAll('.card-opt')];all.forEach((b,k)=>b.onclick=()=>onPick(st,b,k,all));
+  return n;
+},
+analyze(){
+  const items=["Analizando el tiempo desde la ruptura","Identificando el motivo real del fin","Mapeando tu perfil emocional","Calculando tu Índice de Reconquista"];
+  const n=el(`<section class="center">
+    <span class="kicker">⌛ Procesando tu perfil</span>
+    <div class="ring"><svg width="170" height="170"><circle cx="85" cy="85" r="74" stroke="#26262c" stroke-width="12" fill="none"/><circle id="rg" cx="85" cy="85" r="74" stroke="url(#gr)" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="465" stroke-dashoffset="465"/><defs><linearGradient id="gr"><stop offset="0" stop-color="#ef4444"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs></svg><div class="val"><span id="pc">0</span>%</div></div>
+    <div class="checks" style="text-align:left">${items.map(t=>`<div class="check"><span class="bx"></span>${t}</div>`).join('')}</div>
+    <p class="counter">Más de <b id="cnt">0</b> hombres ya transformaron su vida amorosa con su Protocolo Personalizado</p>
+  </section>`);
+  const dur=4200,t0=performance.now(),checks=[...n.querySelectorAll('.check')];
+  (function tick(t){
+    const k=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-k,2);
+    const pc=n.querySelector('#pc');if(!pc)return;
+    pc.textContent=Math.round(e*100);n.querySelector('#rg').style.strokeDashoffset=465*(1-e);
+    n.querySelector('#cnt').textContent=Math.round(e*CONFIG.socialCount).toLocaleString('de-DE');
+    checks.forEach((c,j)=>{const a=j/checks.length,b=(j+1)/checks.length;c.classList.toggle('run',e>=a&&e<b);if(e>=b&&!c.classList.contains('ok')){c.classList.add('ok');c.querySelector('.bx').textContent='✓';sfx.tap()}});
+    if(k<1)requestAnimationFrame(tick);else{addXP(50);setTimeout(next,500)}
+  })(t0);
+  return n;
+},
+result(){
+  const p=profile();
+  const n=el(`<section>
+    <div class="center"><span class="kicker gold">✨ Diagnóstico desbloqueado</span>
+    <h2 style="margin-top:12px">Tu Índice de Reconquista <span class="hl">siguiendo el protocolo</span></h2></div>
+    <div class="gauge">
+      <svg viewBox="0 0 240 130" width="240" height="130"><path d="M20 120 A100 100 0 0 1 220 120" stroke="#26262c" stroke-width="18" fill="none" stroke-linecap="round"/><path id="gArc" d="M20 120 A100 100 0 0 1 220 120" stroke="url(#gg)" stroke-width="18" fill="none" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" style="transition:stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1)"/><defs><linearGradient id="gg"><stop offset="0" stop-color="#ef4444"/><stop offset=".6" stop-color="#fbbf24"/><stop offset="1" stop-color="#22c55e"/></linearGradient></defs></svg>
+      <div class="num"><span id="gN">0</span><small>%</small></div><div class="lab">Alto potencial</div>
+    </div>
+    <div class="panel glow" style="margin-top:30px">
+      <div class="profile"><div class="av">${p.icon}</div><div class="t"><small>Tu perfil</small><div>${p.name}</div></div></div>
+      <p style="margin-top:12px">${p.text}</p>
+      <div class="stats">
+        <div class="stat"><div class="row"><span>Conexión emocional restante</span><span>${p.s1}%</span></div><div class="bar"><i style="background:var(--gold)" data-w="${p.s1}"></i></div></div>
+        <div class="stat"><div class="row"><span>Ventana de oportunidad</span><span>${p.s2}%</span></div><div class="bar"><i style="background:var(--red)" data-w="${p.s2}"></i></div></div>
+        <div class="stat"><div class="row"><span>Potencial con el protocolo</span><span>${p.score}%</span></div><div class="bar"><i style="background:var(--green)" data-w="${p.score}"></i></div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="expert"><div class="ph">👩‍⚕️${img(CONFIG.expert.photo)}</div><div><b>${CONFIG.expert.name}</b><span>${CONFIG.expert.role}</span></div></div>
+      <p><b>Ella no volvió porque estás usando la estrategia equivocada.</b></p>
+      <p>El cerebro de la mujer tiene dos lados: el racional y el emocional. Y todo lo que has hecho hasta ahora para recuperarla solo reforzó en su mente que terminar fue lo mejor.</p>
+      <p>Es como si su lado emocional estuviera apagado: un <span class="hl"><b>apagón emocional</b></span>.</p>
+      <p>La buena noticia: ese lado puede reactivarse con el estímulo correcto — mensajes estratégicos que despiertan nostalgia y el miedo de perderte.</p>
+      <p style="color:var(--mute);font-size:13px">Y tranquilo: aunque ella te haya bloqueado, vas a ver formas para que te responda.</p>
+    </div>
+    <button class="cta pulse">Continuar misión ➜ Nivel 5</button>
+  </section>`);
+  setTimeout(()=>{n.querySelector('#gArc').style.strokeDashoffset=314*(1-p.score/100);
+    const t0=performance.now();(function tk(t){const k=Math.min(1,(t-t0)/1600),e=1-Math.pow(1-k,3);const g=n.querySelector('#gN');if(!g)return;g.textContent=Math.round(e*p.score);if(k<1)requestAnimationFrame(tk)})(t0);
+    n.querySelectorAll('.bar i').forEach(b=>b.style.width=b.dataset.w+'%');confetti(70);badge('📊','Perfil revelado: '+p.name)},250);
+  n.querySelector('.cta').onclick=next;
+  return n;
+},
+proof(){
+  const imgs=CONFIG.testimonialImages;
+  const n=el(`<section>
+    <span class="kicker">🏆 Ranking de misiones completadas</span>
+    <h2>Si ellos, en una <span class="hl">situación peor que la tuya</span>, lo lograron… tú también puedes.</h2>
+    <p class="sub">Algunos estaban bloqueados. Otros vieron a su ex con otro hombre. Otros cometieron errores graves. Desliza 👉</p>
+    <div class="car" id="car">${imgs.map((s,k)=>`<div class="sl"><div class="miss"><b>📱</b>Print de cliente ${k+1}</div>${img(s)}</div>`).join('')}</div>
+    <div class="dots">${imgs.map((_,k)=>`<i class="${k?'':'on'}"></i>`).join('')}</div>
+    <button class="cta pulse">¡Quiero los mismos resultados!</button>
+  </section>`);
+  n.querySelectorAll('.sl img').forEach(im=>im.addEventListener('load',()=>{const m=im.parentNode.querySelector('.miss');m&&m.remove()}));
+  const car=n.querySelector('#car');car.addEventListener('scroll',()=>{const w=car.firstElementChild.offsetWidth+12;const k=Math.round(car.scrollLeft/w);n.querySelectorAll('.dots i').forEach((d,j)=>d.classList.toggle('on',j===k))});
+  n.querySelector('.cta').onclick=()=>{addXP(40);next()};
+  return n;
+},
+build(){
+  const mods=["Analizando tus respuestas","Seleccionando mensajes para tu perfil","Ajustando la Ruta de 15 Días","Preparando tus recompensas"];
+  const n=el(`<section class="center">
+    <span class="kicker">⏳ Creando tu protocolo personalizado</span>
+    <h2 style="margin-top:14px">Forjando tu <span class="hl">Protocolo de la Reconquista</span>…</h2>
+    <div class="panel" style="text-align:left">
+      <div class="stat"><div class="row"><span id="bm">${mods[0]}</span><span id="bp">0%</span></div><div class="bar" style="height:12px"><i id="bb" style="background:linear-gradient(90deg,var(--red),var(--gold));transition:none"></i></div></div>
+      <div class="checks">${mods.map(t=>`<div class="check"><span class="bx"></span>${t}</div>`).join('')}</div>
+    </div>
+    <div class="badges" id="bd"></div>
+  </section>`);
+  n.querySelector('#bd').innerHTML=S.badges.map(b=>`<span>${b}</span>`).join('');
+  const dur=4000,t0=performance.now(),checks=[...n.querySelectorAll('.check')];
+  (function tick(t){
+    const k=Math.min(1,(t-t0)/dur);const bb=n.querySelector('#bb');if(!bb)return;
+    bb.style.width=(k*100)+'%';n.querySelector('#bp').textContent=Math.round(k*100)+'%';
+    const j=Math.min(mods.length-1,Math.floor(k*mods.length));n.querySelector('#bm').textContent=mods[j];
+    checks.forEach((c,q)=>{c.classList.toggle('run',q===j&&k<1);if((q<j||k>=1)&&!c.classList.contains('ok')){c.classList.add('ok');c.querySelector('.bx').textContent='✓';sfx.tap()}});
+    if(k<1)requestAnimationFrame(tick);else{badge('🛡️','Protocolo generado');setTimeout(next,700)}
+  })(t0);
+  return n;
+},
+chest(){
+  const n=el(`<section class="center">
+    <span class="kicker gold">🎁 Nivel final · Recompensa</span>
+    <h2 style="margin-top:12px">¡Misión completada! <span class="hl">Abre tu cofre</span></h2>
+    <p class="sub" id="chHint">Toca el cofre 3 veces para abrirlo 👇</p>
+    <div class="chest-wrap"><div class="chest" id="chest" role="button" aria-label="Abrir cofre">🧰</div>
+    <div class="taps"><i></i><i></i><i></i></div></div>
+    <div class="loot" id="loot"></div>
+    <div class="total" id="tot" style="display:none">Valor total desbloqueado<b id="totN">$0</b></div>
+    <button class="cta pulse" id="chGo" style="display:none">Ver mi protocolo ➜</button>
+  </section>`);
+  let taps=0;const ch=n.querySelector('#chest');
+  ch.onclick=()=>{
+    if(taps>=3)return;taps++;sfx.tap();n.querySelectorAll('.taps i')[taps-1].classList.add('on');
+    ch.classList.remove('shake');void ch.offsetWidth;ch.classList.add('shake');
+    if(taps===3){
+      ch.classList.add('open');ch.textContent='💰';sfx.open();n.querySelector('#chHint').textContent='¡Recompensas desbloqueadas!';
+      const r=ch.getBoundingClientRect();confetti(160,r.left+r.width/2,r.top+r.height/2,['#fbbf24','#f59e0b','#fff','#22c55e']);
+      const loot=n.querySelector('#loot');let sum=0;n.querySelector('#tot').style.display='block';
+      BONUSES.forEach((b,k)=>{
+        const c=el(`<div class="lootc"><div class="ic">${b.e}${img(CONFIG.bonusImages[k]||'')}</div><div><b>${k<6?'Bono '+(k+1)+': ':''}${b.t}</b><s>$${b.v},00</s><em>GRATIS</em></div></div>`);
+        loot.appendChild(c);
+        setTimeout(()=>{c.classList.add('show');sfx.coin();sum+=b.v;n.querySelector('#totN').textContent='$'+sum;addXP(20)},500+k*420);
+      });
+      setTimeout(()=>{n.querySelector('#chGo').style.display='flex';badge('💎','Cofre legendario abierto')},500+BONUSES.length*420);
+    }
+  };
+  n.querySelector('#chGo').onclick=next;
+  return n;
+},
+offer(){
+  const p=profile();
+  const n=el(`<section>
+    <div class="center"><span class="kicker" style="color:var(--green);border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.08)">✅ Protocolo generado con éxito</span>
+    <h2 style="margin-top:12px">¡Tu protocolo para recuperar a tu ex en <span class="hl">hasta 1 semana</span> está listo!</h2>
+    <p class="sub">Perfil <b style="color:#fff">${p.name}</b> · Índice <b style="color:var(--green)">${p.score}%</b> · <b style="color:var(--gold)">${S.xp} XP</b></p></div>
+    <div class="video">${CONFIG.vslEmbed||`<div class="ph"><b>▶</b>Mira el vídeo para ver cómo acceder<br>a tu protocolo personalizado 👇</div>`}</div>
+    <a class="cta pulse" data-checkout>¡Quiero mi protocolo personalizado!</a>
+    <div id="rest">
+
+    <div class="panel">
+      <h2 style="font-size:19px;margin-top:0">Tu ruta 👇</h2>
+      <div class="tl">
+        <div class="tli"><b>Hoy</b><p>Tú estás aquí…</p></div>
+        <div class="tli"><b>48 horas</b><p>Ella ya piensa en ti, pero no sabe por qué.</p></div>
+        <div class="tli"><b>5 días</b><p>Ella piensa en ti todo el día.</p></div>
+        <div class="tli"><b>7 días</b><p>Ella quiere volver contigo.</p></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="font-size:19px;margin-top:0">Hoy vas a recibir:</h2>
+      <ul class="list">${DELIVERABLES.map(d=>`<li>${d}</li>`).join('')}</ul>
+    </div>
+
+    <div class="panel gold">
+      <div class="center"><span class="kicker gold">🎁 Tu botín del cofre</span><h2 style="font-size:19px">7 bonos exclusivos de regalo</h2></div>
+      ${BONUSES.map((b,k)=>`<div class="bonus"><div class="ic">${b.e}${img(CONFIG.bonusImages[k]||'')}</div><div><span class="tag">DESBLOQUEADO</span><b>${k<6?'Bono '+(k+1)+': ':''}${b.t}</b><div class="pr"><s>De $${b.v},00</s> → <em>GRATIS</em></div><p>${b.d}</p></div></div>`).join('')}
+      <p class="center" style="margin-top:10px;font-size:14px">Todos estos bonos suman más de <b style="color:var(--gold)">$297</b> y hoy vienen <b>GRATIS</b> con tu protocolo.</p>
+    </div>
+
+    <div class="price">
+      <div class="rib">✓ GARANTÍA DE 60 DÍAS</div>
+      <div class="old">${CONFIG.priceOld}</div>
+      <div class="new">${CONFIG.price}</div>
+      <div class="what">Protocolo de la Reconquista + 7 Bonos</div>
+      <div class="once">PAGO ÚNICO — SIN CUOTAS MENSUALES NI RENOVACIONES</div>
+      <a class="cta pulse" data-checkout>¡Empezar la reconquista ahora!</a>
+    </div>
+    <div class="panel center" style="border-color:rgba(239,68,68,.4)">
+      <span class="kicker">♾️ Acceso de por vida</span>
+      <p style="margin-top:10px">PAGO ÚNICO de <b>${CONFIG.price} USD</b>, sin cuotas mensuales ni renovaciones.</p>
+      <p style="margin-top:12px"><span class="kicker gold">💱 ¡No te preocupes!</span></p>
+      <p style="font-size:14px;color:var(--mute)">El valor se convierte automáticamente a la moneda de tu país al hacer clic en el botón verde. Además, puedes pagar con métodos de pago locales.</p>
+    </div>
+
+    <div class="panel guar">
+      <div class="seal"><div><b>60</b>DÍAS</div></div>
+      <p style="font-size:14px">Tienes 60 días completos para aplicar el Protocolo. Si, por alguna razón, tu ex no vuelve contigo en ese plazo, solo envía un email o WhatsApp y te devolvemos el 100% de tu dinero.</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="font-size:19px;margin-top:0">¿Para quién es el Protocolo?</h2>
+      <div class="for">
+        <div><b>Quien quiere reconquistar el amor perdido</b>Si deseas reconquistar a tu ex, este protocolo muestra el camino.</div>
+        <div><b>Quien no sabe cómo volver a empezar</b>Aprende las mejores estrategias para reconectar emocionalmente.</div>
+        <div><b>Quien necesita un plan</b>Métodos claros y eficaces, paso a paso.</div>
+        <div><b>Quien enfrenta bloqueo o distancia</b>Técnicas para romper barreras emocionales.</div>
+        <div><b>Quien se siente perdido</b>Un paso a paso práctico para empezar con seguridad.</div>
+        <div><b>Quien quiere ser inolvidable</b>Cómo destacarte y tocar sus emociones.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 style="font-size:19px;margin-top:0">Dudas frecuentes</h2>
+      ${FAQ.map(([q,a])=>`<div class="faq"><button>${q}<span>＋</span></button><div class="a">${a}</div></div>`).join('')}
+    </div>
+
+    <a class="cta pulse" data-checkout>¡Acceder a mi protocolo ahora!</a>
+    <div class="badges">${S.badges.map(b=>`<span>${b}</span>`).join('')}</div>
+    <p class="foot">${CONFIG.brand} · Los resultados pueden variar de persona a persona.</p>
+    </div>
+  </section>`);
+  const rest=n.querySelector('#rest');
+  if(CONFIG.revealDelaySec>0){rest.style.display='none';n.querySelector('.cta').style.display='none';
+    setTimeout(()=>{rest.style.display='';n.querySelector('.cta').style.display='';},CONFIG.revealDelaySec*1000);}
+  n.querySelectorAll('.faq button').forEach(b=>b.onclick=()=>b.parentNode.classList.toggle('open'));
+  wireCheckout(n);
+  const sticky=$('#sticky');sticky.querySelector('[data-price]').textContent=CONFIG.price;wireCheckout(sticky);
+  const firstCta=n.querySelector('[data-checkout]');
+  const io=new IntersectionObserver(([e])=>sticky.classList.toggle('show',!e.isIntersecting&&e.boundingClientRect.top<0));
+  setTimeout(()=>io.observe(firstCta),300);
+  return n;
+},
+};
+
+function wireCheckout(root){root.querySelectorAll('[data-checkout]').forEach(a=>{a.href=checkoutHref();a.target='_top';a.onclick=()=>track('checkout')})}
+
+/* ---------- perfil personalizado ---------- */
+function profile(){
+  const t=S.ans.tiempo??1, m=S.ans.motivo??3;
+  const base=[91,88,83,77][t];
+  const adj=[0,-4,-2,-1,3][m];
+  const score=Math.max(70,Math.min(94,base+adj));
+  const P=[
+    {icon:"🌪️",name:"El Desgastado",text:"La relación no terminó por falta de amor, sino por desgaste. Eso es bueno: el sentimiento sigue ahí, solo está cubierto por las peleas. Tu protocolo empieza limpiando esa imagen negativa."},
+    {icon:"🔥",name:"El Arrepentido",text:"Cometiste un error, y ella está protegiéndose. Insistir con disculpas solo refuerza el dolor. Tu protocolo usa la Disculpa Invisible para reconstruir la confianza sin presión."},
+    {icon:"🧊",name:"El Apagón Emocional",text:"Cuando ella dice que 'ya no siente lo mismo', su lado emocional está apagado, no muerto. Tu protocolo se enfoca en reactivar esa chispa con los estímulos correctos."},
+    {icon:"🌫️",name:"El Desconcertado",text:"No saber por qué se fue es lo que más duele. Tu protocolo empieza revelando las señales que ella dejó y lo que realmente pasó en su mente."},
+    {icon:"🔙",name:"El Que Soltó",text:"Fuiste tú quien terminó, y eso te da una ventaja: ella todavía guarda la herida del rechazo, lo que significa que aún le importas. Tu protocolo te muestra cómo volver sin parecer inseguro."},
+  ][m];
+  const tt=["Menos de una semana: la ventana está totalmente abierta.","Entre 1 y 4 semanas: el momento ideal para actuar.","Entre 1 y 3 meses: todavía hay memoria emocional fuerte, pero hay que actuar ya.","Más de 3 meses: el camino es más largo, pero tu protocolo está ajustado para eso."][t];
+  return {...P,score,text:P.text+' <br><br><b>⏱️ '+tt+'</b>',s1:Math.min(95,score-6+(m===4?6:0)),s2:[94,82,64,48][t]};
+}
+
+go(0);
+</script>
+</body>
+</html>
