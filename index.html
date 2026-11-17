@@ -307,6 +307,9 @@ const CONFIG = {
   ],
   // Depoimentos: sube las imágenes a la carpeta images/depoimentos/ con estos nombres.
   // Las que no existan se ocultan solas. Puedes agregar o quitar líneas.
+  // true = muestra recuadros "Depoimento N" donde falten imágenes (para ver dónde van).
+  // Cámbialo a false cuando subas las imágenes.
+  testimonialPlaceholders: true,
   testimonials: [
     "images/depoimentos/depoimento-1.webp",
     "images/depoimentos/depoimento-2.webp",
@@ -686,10 +689,12 @@ build(){
       <div class="stat"><div class="row"><span id="bm">${mods[0]}</span><span id="bp">0%</span></div><div class="bar" style="height:12px"><i id="bb" style="background:linear-gradient(90deg,var(--red),var(--gold));transition:none"></i></div></div>
       <div class="checks">${mods.map(t=>`<div class="check"><span class="bx"></span>${t}</div>`).join('')}</div>
     </div>
+    ${testimonialsBlock('',true)}
     <div class="badges" id="bd"></div>
   </section>`);
+  wireTestimonials(n);
   n.querySelector('#bd').innerHTML=S.badges.map(b=>`<span>${b}</span>`).join('');
-  const dur=4000,t0=performance.now(),checks=[...n.querySelectorAll('.check')];
+  const dur=6000,t0=performance.now(),checks=[...n.querySelectorAll('.check')];
   (function tick(t){
     const k=Math.min(1,(t-t0)/dur);const bb=n.querySelector('#bb');if(!bb)return;
     bb.style.width=(k*100)+'%';n.querySelector('#bp').textContent=Math.round(k*100)+'%';
@@ -798,6 +803,7 @@ offer(){
       ${FAQ.map(([q,a])=>`<div class="faq"><button>${q}<span>＋</span></button><div class="a">${a}</div></div>`).join('')}
     </div>
 
+    ${testimonialsBlock('Ellos ya lo lograron 👉')}
     <a class="cta pulse" data-checkout>¡Acceder a mi protocolo ahora!</a>
     <div class="badges">${S.badges.map(b=>`<span>${b}</span>`).join('')}</div>
     <p class="foot">${CONFIG.brand} · Los resultados pueden variar de persona a persona.</p>
@@ -817,11 +823,11 @@ offer(){
 },
 };
 
-function testimonialsBlock(title){
+function testimonialsBlock(title,auto){
   const list=CONFIG.testimonials||[];if(!list.length)return '';
-  return `<div class="tst" style="display:none;margin-top:18px">
+  return `<div class="tst" data-auto="${auto?1:0}" style="display:none;margin-top:18px">
     ${title?`<h2 style="font-size:19px;text-align:center">${title}</h2>`:''}
-    <div class="car">${list.map(src=>`<div class="sl" style="min-height:0;display:none"><img src="${encodeURI(src)}" alt=""></div>`).join('')}</div>
+    <div class="car">${list.map((src,k)=>`<div class="sl" data-n="${k+1}" style="min-height:0;display:none"><img src="${encodeURI(src)}" alt=""></div>`).join('')}</div>
     <div class="dots"></div>
   </div>`;
 }
@@ -829,7 +835,9 @@ function wireTestimonials(root){
   root.querySelectorAll('.tst').forEach(box=>{
     const car=box.querySelector('.car'),dots=box.querySelector('.dots');
     const refresh=()=>{const vis=[...car.children].filter(c=>c.style.display!=='none');box.style.display=vis.length?'block':'none';dots.innerHTML=vis.length>1?vis.map((_,k)=>`<i class="${k?'':'on'}"></i>`).join(''):''};
-    car.querySelectorAll('img').forEach(im=>{im.onload=()=>{im.parentNode.style.display='grid';refresh()};im.onerror=()=>im.parentNode.remove()});
+    car.querySelectorAll('img').forEach(im=>{im.onload=()=>{im.parentNode.style.display='grid';refresh()};im.onerror=()=>{const sl=im.parentNode;
+      if(CONFIG.testimonialPlaceholders){sl.innerHTML=`<div class="miss" style="padding:24px;text-align:center;color:var(--dim);font-size:13px;border:2px dashed var(--line);border-radius:12px;margin:10px;min-height:220px;display:grid;place-items:center"><div><b style="display:block;font-size:30px;margin-bottom:6px">📱</b>Depoimento ${sl.dataset.n}<br><small>images/depoimentos/depoimento-${sl.dataset.n}.webp</small></div></div>`;sl.style.display='block';refresh()}else sl.remove()}});
+    if(box.dataset.auto==='1'){let i=0;const iv=setInterval(()=>{if(!document.body.contains(box)){clearInterval(iv);return}const vis=[...car.children].filter(c=>c.style.display!=='none');if(vis.length<2)return;i=(i+1)%vis.length;car.scrollTo({left:vis[i].offsetLeft-car.offsetLeft-16,behavior:'smooth'})},1400)}
     car.addEventListener('scroll',()=>{const f=[...car.children].find(c=>c.style.display!=='none');if(!f)return;const k=Math.round(car.scrollLeft/(f.offsetWidth+12));dots.querySelectorAll('i').forEach((d,j)=>d.classList.toggle('on',j===k))});
   });
 }
