@@ -305,6 +305,16 @@ const CONFIG = {
     "images/quiz-source/dolor-3-miedo.webp",
     "images/quiz-source/dolor-4-feliz.webp",
   ],
+  // Depoimentos: sube las imágenes a la carpeta images/depoimentos/ con estos nombres.
+  // Las que no existan se ocultan solas. Puedes agregar o quitar líneas.
+  testimonials: [
+    "images/depoimentos/depoimento-1.webp",
+    "images/depoimentos/depoimento-2.webp",
+    "images/depoimentos/depoimento-3.webp",
+    "images/depoimentos/depoimento-4.webp",
+    "images/depoimentos/depoimento-5.webp",
+    "images/depoimentos/depoimento-6.webp",
+  ],
   goalImage: "images/quiz-source/objetivo.webp",
   guaranteeImage: "images/quiz-source/garantia.webp",
   bonusImages: [
@@ -662,9 +672,11 @@ proof(){
     <span class="kicker">🗺️ Tu mapa de la misión</span>
     <h2>Así funciona tu <span class="hl">Protocolo de la Reconquista</span></h2>
     <p class="sub">Tres fases, paso a paso, ajustadas a tu perfil.</p>
+    ${testimonialsBlock('')}
     <div class="loot">${ph.map(([e,f,t,d])=>`<div class="lootc show" style="border-color:rgba(239,68,68,.35);background:linear-gradient(90deg,rgba(239,68,68,.1),rgba(239,68,68,.02))"><div class="ic" style="background:#1c1010">${e}</div><div><s style="text-decoration:none;color:var(--gold);font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase">${f}</s><b>${t}</b><span style="font-size:13px;color:var(--mute)">${d}</span></div></div>`).join('')}</div>
     <button class="cta pulse">¡Quiero empezar mi misión!</button>
   </section>`);
+  wireTestimonials(n);
   n.querySelectorAll('.lootc').forEach((c,k)=>{c.classList.remove('show');setTimeout(()=>{c.classList.add('show');sfx.coin()},250+k*350)});
   n.querySelector('.cta').onclick=()=>{addXP(40);next()};
   return n;
@@ -740,6 +752,7 @@ offer(){
         <div class="tli"><b>7 días</b><p>Ella quiere volver contigo.</p></div>
       </div>
     </div>
+    ${testimonialsBlock('Desliza al lado 👉')}
 
     <div class="panel">
       <h2 style="font-size:19px;margin-top:0">Hoy vas a recibir:</h2>
@@ -797,6 +810,7 @@ offer(){
   const rest=n.querySelector('#rest');
   if(CONFIG.revealDelaySec>0){rest.style.display='none';n.querySelector('.cta').style.display='none';
     setTimeout(()=>{rest.style.display='';n.querySelector('.cta').style.display='';},CONFIG.revealDelaySec*1000);}
+  wireTestimonials(n);
   n.querySelectorAll('.faq button').forEach(b=>b.onclick=()=>b.parentNode.classList.toggle('open'));
   wireCheckout(n);
   const sticky=$('#sticky');sticky.querySelector('[data-price]').textContent=CONFIG.price;wireCheckout(sticky);
@@ -807,6 +821,22 @@ offer(){
 },
 };
 
+function testimonialsBlock(title){
+  const list=CONFIG.testimonials||[];if(!list.length)return '';
+  return `<div class="tst" style="display:none;margin-top:18px">
+    ${title?`<h2 style="font-size:19px;text-align:center">${title}</h2>`:''}
+    <div class="car">${list.map(src=>`<div class="sl" style="min-height:0;display:none"><img src="${encodeURI(src)}" alt=""></div>`).join('')}</div>
+    <div class="dots"></div>
+  </div>`;
+}
+function wireTestimonials(root){
+  root.querySelectorAll('.tst').forEach(box=>{
+    const car=box.querySelector('.car'),dots=box.querySelector('.dots');
+    const refresh=()=>{const vis=[...car.children].filter(c=>c.style.display!=='none');box.style.display=vis.length?'block':'none';dots.innerHTML=vis.length>1?vis.map((_,k)=>`<i class="${k?'':'on'}"></i>`).join(''):''};
+    car.querySelectorAll('img').forEach(im=>{im.onload=()=>{im.parentNode.style.display='grid';refresh()};im.onerror=()=>im.parentNode.remove()});
+    car.addEventListener('scroll',()=>{const f=[...car.children].find(c=>c.style.display!=='none');if(!f)return;const k=Math.round(car.scrollLeft/(f.offsetWidth+12));dots.querySelectorAll('i').forEach((d,j)=>d.classList.toggle('on',j===k))});
+  });
+}
 function wireCheckout(root){root.querySelectorAll('[data-checkout]').forEach(a=>{a.href=checkoutHref();a.target='_top';a.onclick=()=>track('checkout')})}
 
 function startMission(){
