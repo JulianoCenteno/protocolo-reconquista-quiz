@@ -37,7 +37,7 @@ img{max-width:100%;display:block}
 .hud{position:sticky;top:0;z-index:20;padding:12px 0 10px;background:linear-gradient(var(--bg) 70%,transparent)}
 .hud-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .brand{display:flex;align-items:center;gap:8px;font-family:"Bricolage Grotesque",Inter,sans-serif;font-weight:800;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
-.brand img{width:30px;height:30px;border-radius:8px;object-fit:cover}
+.brand img{width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 0 6px rgba(239,68,68,.6))}
 .brand .dot{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--red),#7f1d1d);display:grid;place-items:center;font-size:15px}
 .chips{display:flex;gap:6px;align-items:center}
 .chip{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:12px;font-weight:700;white-space:nowrap}
@@ -111,6 +111,10 @@ h2{font-size:23px;font-weight:800;margin:12px 0 8px}
 
 /* intro hero */
 .hero-badge{width:96px;height:96px;margin:16px auto 0;border-radius:28px;display:grid;place-items:center;font-size:46px;background:radial-gradient(circle at 30% 25%,#f87171,#991b1b);box-shadow:0 0 0 6px rgba(239,68,68,.12),0 0 60px rgba(239,68,68,.45);animation:float 3s ease-in-out infinite}
+.hero-logo{position:relative;width:170px;height:150px;margin:22px auto 0;display:grid;place-items:center}
+.hero-logo::before{content:"";position:absolute;inset:-30px;background:radial-gradient(circle,rgba(239,68,68,.42) 0%,rgba(239,68,68,.14) 40%,transparent 70%);animation:glow 3s ease-in-out infinite}
+.hero-logo img{position:relative;width:150px;height:150px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(239,68,68,.45)) drop-shadow(0 8px 18px rgba(0,0,0,.7));animation:float 3.2s ease-in-out infinite}
+@keyframes glow{50%{opacity:.65;transform:scale(1.08)}}
 .perks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}
 .perk{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center;font-size:11px;color:var(--mute);font-weight:600}
 .perk b{display:block;font-size:20px;margin-bottom:2px}
@@ -618,7 +622,7 @@ function onPick(st,btn,idx,all){
 const R={
 intro(){
   const n=el(`<section class="center">
-    <div class="hero-badge" style="overflow:hidden;position:relative">❤️‍🔥<img src="${CONFIG.logo}" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" onerror="this.remove()"></div>
+    <div class="hero-logo"><img src="${CONFIG.logo}" alt="Protocolo de la Reconquista" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'❤️‍🔥',style:'font-size:70px'}))"></div>
     <div style="margin-top:18px"><span class="kicker">🎮 Misión Reconquista · 6 niveles</span></div>
     <h1>¿Quieres saber qué es lo que <span class="hl">ella realmente quiere</span> para volver contigo… pero que <span class="u">nunca va a admitir</span>?</h1>
     <p class="sub">Responde 6 preguntas, gana <b style="color:var(--gold)">dólares</b> en cada nivel y desbloquea tu <b style="color:#fff">Protocolo Personalizado</b> + un cofre con 7 recompensas.</p>
