@@ -116,7 +116,7 @@ h2{font-size:23px;font-weight:800;margin:12px 0 8px}
 .perk b{display:block;font-size:20px;margin-bottom:2px}
 
 /* analyzing */
-.ring{width:170px;height:170px;margin:26px auto 10px;position:relative}
+.ring{width:170px;height:170px;margin:18px auto 10px;position:relative}
 .ring svg{transform:rotate(-90deg)}
 .ring .val{position:absolute;inset:0;display:grid;place-items:center;font-family:"Bricolage Grotesque",sans-serif;font-size:42px;font-weight:800}
 .checks{display:grid;gap:10px;margin-top:18px}
@@ -286,7 +286,7 @@ h2{font-size:23px;font-weight:800;margin:12px 0 8px}
    ===================================================================== */
 const CONFIG = {
   brand: "Protocolo de la Reconquista",
-  logo: "/images/site/logo.webp",
+  logo: "images/site/logo.webp",
   checkoutUrl: "https://pay.kiwify.com/9H0h1AJ",   // se le añaden las UTMs de la URL automáticamente
   priceOld: "$297",
   price: "$19,90",
@@ -295,29 +295,20 @@ const CONFIG = {
   vslEmbed: "",
   // Segundos de vídeo antes de mostrar a oferta (0 = mostrar todo de inmediato)
   revealDelaySec: 0,
-  expert: {
-    name: "Valeria Rodríguez",
-    role: "Especialista en relaciones",
-    photo: "/images/quiz-source/expert-instagram-card.webp",
-  },
   painImages: [
-    "/images/quiz-source/soledad-v2.webp",
-    "/images/quiz-source/LPuY6-245.webp",
-    "/images/quiz-source/miedo-v2.webp",
-    "/images/quiz-source/DPlPw-2.webp",
+    "images/quiz-source/dolor-1-soledad.webp",
+    "images/quiz-source/dolor-2-arrepentimiento.webp",
+    "images/quiz-source/dolor-3-miedo.webp",
+    "images/quiz-source/dolor-4-feliz.webp",
   ],
-  // Prints REALES de clientes (los mismos que ya tienes)
-  testimonialImages: [
-    "/images/quiz-source/dep0.webp","/images/quiz-source/dep1.webp","/images/quiz-source/dep2.webp",
-    "/images/quiz-source/dep3.webp","/images/quiz-source/dep4.webp","/images/quiz-source/dep5.webp",
-    "/images/quiz-source/dep6.webp",
-  ],
+  goalImage: "images/quiz-source/objetivo.webp",
+  guaranteeImage: "images/quiz-source/garantia.webp",
   bonusImages: [
-    "/images/quiz-source/BONO 1 - PR.webp","/images/quiz-source/BONO 2 - PR.webp","/images/quiz-source/BONO 3 - PR.webp",
-    "/images/quiz-source/BONO 4 - PR.webp","/images/quiz-source/BONO 5 - PR.webp","/images/quiz-source/BONO 6 - PR.webp",
-    "/images/quiz-source/REGALO SORPRESA - PR.webp",
+    "images/quiz-source/BONO 1 - PR.webp","images/quiz-source/BONO 2 - PR.webp","images/quiz-source/BONO 3 - PR.webp",
+    "images/quiz-source/BONO 4 - PR.webp","images/quiz-source/BONO 5 - PR.webp","images/quiz-source/BONO 6 - PR.webp",
+    "images/quiz-source/REGALO SORPRESA - PR.webp",
   ],
-  mockup: "/images/quiz-source/mockup.webp",
+  mockup: "images/quiz-source/mockup.webp",
 };
 
 const BONUSES = [
@@ -542,6 +533,7 @@ analyze(){
   const items=["Analizando el tiempo desde la ruptura","Identificando el motivo real del fin","Mapeando tu perfil emocional","Calculando tu Índice de Reconquista"];
   const n=el(`<section class="center">
     <span class="kicker">⌛ Procesando tu perfil</span>
+    <div style="margin:16px auto 0;width:120px;height:120px;border-radius:50%;overflow:hidden;border:3px solid var(--red);box-shadow:0 0 40px var(--redglow);background:#1c1010;display:grid;place-items:center;font-size:40px;position:relative">💞${img(CONFIG.goalImage)}</div>
     <div class="ring"><svg width="170" height="170"><circle cx="85" cy="85" r="74" stroke="#26262c" stroke-width="12" fill="none"/><circle id="rg" cx="85" cy="85" r="74" stroke="url(#gr)" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="465" stroke-dashoffset="465"/><defs><linearGradient id="gr"><stop offset="0" stop-color="#ef4444"/><stop offset="1" stop-color="#fbbf24"/></linearGradient></defs></svg><div class="val"><span id="pc">0</span>%</div></div>
     <div class="checks" style="text-align:left">${items.map(t=>`<div class="check"><span class="bx"></span>${t}</div>`).join('')}</div>
     <p class="counter">Más de <b id="cnt">0</b> hombres ya transformaron su vida amorosa con su Protocolo Personalizado</p>
@@ -576,7 +568,7 @@ result(){
       </div>
     </div>
     <div class="panel">
-      <div class="expert"><div class="ph">👩‍⚕️${img(CONFIG.expert.photo)}</div><div><b>${CONFIG.expert.name}</b><span>${CONFIG.expert.role}</span></div></div>
+      <div class="expert"><div class="ph">🧠</div><div><b>Por qué ella no volvió</b><span>Lo que tu diagnóstico revela</span></div></div>
       <p><b>Ella no volvió porque estás usando la estrategia equivocada.</b></p>
       <p>El cerebro de la mujer tiene dos lados: el racional y el emocional. Y todo lo que has hecho hasta ahora para recuperarla solo reforzó en su mente que terminar fue lo mejor.</p>
       <p>Es como si su lado emocional estuviera apagado: un <span class="hl"><b>apagón emocional</b></span>.</p>
@@ -592,17 +584,19 @@ result(){
   return n;
 },
 proof(){
-  const imgs=CONFIG.testimonialImages;
+  const ph=[
+    ["🧊","Fase 1 · Días 1–2","Romper el apagón emocional","Detienes los errores que la alejan y cambias la imagen que ella tiene de ti."],
+    ["🧲","Fase 2 · Días 3–5","Despertar la curiosidad","Mensajes estratégicos que la hacen pensar en ti sin que sepa por qué."],
+    ["❤️‍🔥","Fase 3 · Días 6–7","Reencuentro","Cómo conducir la conversación y el encuentro sin parecer desesperado."],
+  ];
   const n=el(`<section>
-    <span class="kicker">🏆 Ranking de misiones completadas</span>
-    <h2>Si ellos, en una <span class="hl">situación peor que la tuya</span>, lo lograron… tú también puedes.</h2>
-    <p class="sub">Algunos estaban bloqueados. Otros vieron a su ex con otro hombre. Otros cometieron errores graves. Desliza 👉</p>
-    <div class="car" id="car">${imgs.map((s,k)=>`<div class="sl"><div class="miss"><b>📱</b>Print de cliente ${k+1}</div>${img(s)}</div>`).join('')}</div>
-    <div class="dots">${imgs.map((_,k)=>`<i class="${k?'':'on'}"></i>`).join('')}</div>
-    <button class="cta pulse">¡Quiero los mismos resultados!</button>
+    <span class="kicker">🗺️ Tu mapa de la misión</span>
+    <h2>Así funciona tu <span class="hl">Protocolo de la Reconquista</span></h2>
+    <p class="sub">Tres fases, paso a paso, ajustadas a tu perfil.</p>
+    <div class="loot">${ph.map(([e,f,t,d])=>`<div class="lootc show" style="border-color:rgba(239,68,68,.35);background:linear-gradient(90deg,rgba(239,68,68,.1),rgba(239,68,68,.02))"><div class="ic" style="background:#1c1010">${e}</div><div><s style="text-decoration:none;color:var(--gold);font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase">${f}</s><b>${t}</b><span style="font-size:13px;color:var(--mute)">${d}</span></div></div>`).join('')}</div>
+    <button class="cta pulse">¡Quiero empezar mi misión!</button>
   </section>`);
-  n.querySelectorAll('.sl img').forEach(im=>im.addEventListener('load',()=>{const m=im.parentNode.querySelector('.miss');m&&m.remove()}));
-  const car=n.querySelector('#car');car.addEventListener('scroll',()=>{const w=car.firstElementChild.offsetWidth+12;const k=Math.round(car.scrollLeft/w);n.querySelectorAll('.dots i').forEach((d,j)=>d.classList.toggle('on',j===k))});
+  n.querySelectorAll('.lootc').forEach((c,k)=>{c.classList.remove('show');setTimeout(()=>{c.classList.add('show');sfx.coin()},250+k*350)});
   n.querySelector('.cta').onclick=()=>{addXP(40);next()};
   return n;
 },
@@ -705,7 +699,7 @@ offer(){
     </div>
 
     <div class="panel guar">
-      <div class="seal"><div><b>60</b>DÍAS</div></div>
+      <div class="seal" style="position:relative;overflow:hidden;background:none;box-shadow:none;width:96px;height:96px"><img src="${CONFIG.guaranteeImage}" alt="Garantía 60 días" style="width:100%;height:100%;object-fit:contain" onerror="this.parentNode.innerHTML='<div><b>60</b>DÍAS</div>';this.parentNode.removeAttribute('style')"></div>
       <p style="font-size:14px">Tienes 60 días completos para aplicar el Protocolo. Si, por alguna razón, tu ex no vuelve contigo en ese plazo, solo envía un email o WhatsApp y te devolvemos el 100% de tu dinero.</p>
     </div>
 
