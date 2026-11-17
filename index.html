@@ -241,6 +241,22 @@ h2{font-size:23px;font-weight:800;margin:12px 0 8px}
 .lvl small{display:block;font-size:12px;font-weight:900;letter-spacing:.3em;color:var(--gold)}
 .lvl b{font-family:"Bricolage Grotesque",sans-serif;font-size:64px;font-weight:800;text-shadow:0 0 40px rgba(239,68,68,.8)}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:57}
+.stretch{display:flex;align-items:center;gap:8px;margin:10px 0 2px;padding:9px 12px;border-radius:12px;background:linear-gradient(90deg,rgba(251,191,36,.14),rgba(251,191,36,.03));border:1px solid rgba(251,191,36,.35);font-size:13px;font-weight:800;color:var(--gold);animation:in .6s}
+.mirror{margin-top:10px;padding:10px 12px;border-left:3px solid var(--red);background:rgba(239,68,68,.06);border-radius:0 10px 10px 0;font-size:13.5px;color:#e4e4e7}
+.teaser{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px;border-radius:14px;background:var(--card);border:1px dashed rgba(239,68,68,.45)}
+.teaser .av{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:#1c1010;flex:none}
+.teaser small{display:block;font-size:10px;font-weight:900;letter-spacing:.1em;color:var(--red);text-transform:uppercase}
+.teaser .blur{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:17px;filter:blur(6px);user-select:none}
+.teaser .lock{margin-left:auto;font-size:18px}
+.valid{position:fixed;inset:0;z-index:59;display:grid;place-items:center;background:rgba(9,9,11,.82);backdrop-filter:blur(4px);opacity:0;transition:opacity .3s;pointer-events:none}
+.valid.show{opacity:1;pointer-events:auto}
+.valid .box{max-width:340px;margin:0 20px;text-align:center;padding:24px 20px;border-radius:20px;background:var(--card);border:1px solid rgba(239,68,68,.4);box-shadow:0 0 60px rgba(239,68,68,.2);transform:scale(.92);transition:transform .35s cubic-bezier(.2,1.4,.4,1)}
+.valid.show .box{transform:none}
+.valid .box b{display:block;font-size:34px;margin-bottom:8px}
+.valid .box h3{font-family:"Bricolage Grotesque",sans-serif;font-size:20px;margin-bottom:6px}
+.valid .box p{font-size:14px;color:var(--mute)}
+.exit .box .cta{margin-top:16px}
+.exit .box .leave{margin-top:12px;font-size:13px;color:var(--dim);text-decoration:underline}
 
 @keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes pulse{50%{box-shadow:0 0 0 8px rgba(239,68,68,.08)}}
@@ -259,6 +275,8 @@ h2{font-size:23px;font-weight:800;margin:12px 0 8px}
 <body>
 <canvas id="fx"></canvas>
 <div class="toast" id="toast"><div class="i" id="toastI">🏆</div><div><small>Logro desbloqueado</small><b id="toastT"></b></div></div>
+<div class="valid" id="valid"><div class="box"><b id="vI">🤝</b><h3 id="vT"></h3><p id="vP"></p></div></div>
+<div class="valid exit" id="exitM"><div class="box"><b>⚠️</b><h3>¡Espera! Tu diagnóstico está al <span id="exPct">50</span>%</h3><p>Si sales ahora vas a perder tu progreso y las recompensas que ya ganaste (<b id="exMoney" style="color:var(--gold);display:inline;font-size:inherit"></b>).</p><button class="cta pulse" id="exStay">Continuar mi misión</button><button class="leave" id="exLeave">Salir de todos modos</button></div></div>
 <div class="lvl" id="lvl"><div><small>NIVEL</small><b id="lvlN">2</b></div></div>
 
 <div class="app">
@@ -362,19 +380,24 @@ const STEPS = [
    opts:[["⚡","Menos de una semana"],["📅","Entre 1 y 4 semanas"],["🗓️","Entre 1 y 3 meses"],["⏳","Más de 3 meses"]],
    badge:["🏁","Primer paso dado"]},
   {id:"motivo", type:"q", level:2, xp:60,
+   mirror:a=>["Menos de una semana: estás en el mejor momento para actuar. Ahora necesito entender <b>qué pasó</b>.","Entre 1 y 4 semanas: la ventana está abierta. Ahora dime <b>por qué terminó</b>.","Entre 1 y 3 meses: todavía hay memoria emocional fuerte. Para ajustar tu plan necesito saber <b>el motivo</b>.","Más de 3 meses: tu caso requiere un enfoque especial. Empecemos por <b>el motivo</b>."][a.tiempo],
    title:'¿Por qué <span class="hl">ella</span> terminó contigo?',
    opts:[["🌪️","Tuvimos muchas peleas y la relación se fue desgastando"],["💥","Cometí un error grave: una infidelidad o una mentira"],["🧊","Ella dijo que ya no sentía lo mismo por mí"],["❓","No sé con certeza, simplemente se fue"],["🔙","Fui yo quien terminó, pero me arrepentí"]]},
   {id:"dolor", type:"grid", level:3, xp:70,
+   mirror:a=>["Las peleas desgastan, pero el sentimiento suele seguir ahí.","Un error no define el final. Muchos hombres con tu historia lo revirtieron.","Cuando ella dice que 'ya no siente lo mismo', casi siempre es un apagón temporal.","No saber por qué se fue es lo que más duele. Vamos a descubrirlo.","Arrepentirte es la señal de que todavía hay algo que salvar."][a.motivo],
+   validate:["🤝","No estás solo","Esta es una de las respuestas más elegidas por los hombres que completan la misión. Lo que sientes es normal, y tiene solución."],
    title:'¿Qué es lo que te está <span class="hl">destruyendo por dentro</span> desde la ruptura?',
    opts:[["🌑","La soledad y el enorme vacío que ella dejó"],["😣","Saber que yo podría haber evitado todo esto"],["😰","El miedo de que ella ya esté con otro hombre"],["💔","Imaginar que ella está feliz y siguió adelante sin mí"]],
    badge:["🧠","Autoconocimiento"]},
-  {id:"miedo", type:"q", level:4, xp:80,
+  {id:"miedo", type:"q", level:4, xp:80, teaser:true,
+   validate:["💪","Ese miedo es tu motor","Reconocerlo es el primer paso. Tu protocolo está diseñado justamente para que eso no pase."],
    title:'Si no actúas ahora, ¿qué crees que <span class="hl">va a pasar</span>?',
    opts:[["😔","Ella va a olvidar todo lo que vivimos juntos"],["💔","Ella se va a enamorar de otro y nunca más me va a mirar"],["⏳","El tiempo va a pasar y la ventana se va a cerrar para siempre"],["😫","No sé, y ese es exactamente mi mayor miedo"]],
    badge:["🔥","Valentía: enfrentaste tu miedo"]},
   {id:"analisis", type:"analyze", level:4},
   {id:"resultado", type:"result", level:4},
   {id:"deseo", type:"q", level:5, xp:90,
+   mirror:a=>"Tu perfil <b>"+profile().name+"</b> responde muy bien a los estímulos emocionales correctos.",
    title:'Además de los mensajes y tu protocolo, ¿quieres que te muestre cómo hacer que ella sienta un <span class="hl">deseo incontrolable de volver</span>?',
    opts:[["❤️‍🔥","Sí, quiero que ella de verdad sienta mi falta"],["🚀","Sí, pero quiero algo directo y que funcione rápido"]]},
   {id:"prueba", type:"proof", level:5},
@@ -558,13 +581,37 @@ function go(i){
 }
 const next=()=>go(S.i+1);
 
+/* ---------- engagement helpers ---------- */
+const Q_TYPES=['q','grid'];
+function questionsLeft(i){return STEPS.slice(i+1).filter(s=>Q_TYPES.includes(s.type)).length}
+function quizPct(){const qs=STEPS.filter(s=>Q_TYPES.includes(s.type)).length;const done=STEPS.slice(0,S.i).filter(s=>Q_TYPES.includes(s.type)).length;return Math.max(10,Math.round(done/qs*100))}
+function stretchBanner(i){const l=questionsLeft(i);if(l===0)return '<div class="stretch">🏁 ¡Última pregunta! Tu diagnóstico está a un clic</div>';if(l<=2)return `<div class="stretch">⚡ ¡Solo faltan ${l+1} preguntas para tu diagnóstico!</div>`;return ''}
+function teaserCard(){return `<div class="teaser"><div class="av">🔒</div><div><small>Tu perfil ya tiene nombre</small><div class="blur">${profile().name}</div></div><span class="lock">✨</span></div><p class="sub" style="font-size:12px;margin-top:6px;text-align:center">Se revela al terminar el nivel 4</p>`}
+// recompensa sorpresa en una pregunta aleatoria
+S.surprise=['motivo','dolor','miedo'][Math.floor(Math.random()*3)];
+function showValidation([icon,title,text],cb){
+  $('#vI').textContent=icon;$('#vT').textContent=title;$('#vP').textContent=text;
+  $('#valid').classList.add('show');sfx.proof();
+  setTimeout(()=>{$('#valid').classList.remove('show');setTimeout(cb,300)},2300);
+}
+// exit intent
+S.exitShown=false;
+function exitEligible(){const t=STEPS[S.i]&&STEPS[S.i].type;return !S.exitShown&&t&&!['intro','offer'].includes(t)}
+function showExit(){if(!exitEligible())return;S.exitShown=true;$('#exPct').textContent=quizPct();$('#exMoney').textContent=money(S.xp);$('#exitM').classList.add('show');sfx.chest()}
+$('#exStay').onclick=()=>{$('#exitM').classList.remove('show');sfx.pick()};
+$('#exLeave').onclick=()=>{$('#exitM').classList.remove('show');try{history.go(-2)}catch(e){}};
+document.addEventListener('mouseout',e=>{if(!e.relatedTarget&&e.clientY<=0)showExit()});
+try{history.pushState({q:1},'',location.href);addEventListener('popstate',()=>{if(exitEligible()){history.pushState({q:1},'',location.href);showExit()}})}catch(e){}
+
 /* ---------- answer handling ---------- */
 function onPick(st,btn,idx,all){
   if(btn.dataset.lock)return;all.forEach(b=>{b.dataset.lock=1;if(b!==btn)b.classList.add('fade')});
   btn.classList.add('pick');sfx.pick();
   S.ans[st.id]=idx;addXP(st.xp||40,btn);
   if(st.badge)badge(...st.badge);
-  setTimeout(next,1400);
+  if(S.surprise===st.id){setTimeout(()=>{addXP(50,btn);badge('🎰','¡Bonus sorpresa! +'+money(50));const r=btn.getBoundingClientRect();confetti(50,r.left+r.width/2,r.top,['#fbbf24','#f59e0b','#fff'])},500)}
+  if(st.validate)setTimeout(()=>showValidation(st.validate,next),1100);
+  else setTimeout(next,1400);
 }
 
 /* ===================== RENDERERS ===================== */
@@ -588,19 +635,24 @@ intro(){
   n.querySelectorAll('.opt').forEach((b,k)=>b.onclick=()=>{S.ans.intro=k;b.classList.add('pick');sfx.pick();sfx.whoosh();if(S.sound)MUSIC.start();setTimeout(startMission,500)});
   return n;
 },
-q(st){
+q(st,i){
   const n=el(`<section>
     <div class="qmeta"><span>NIVEL ${st.level} DE ${LEVELS}</span><span>Premio: <b>🪙 +${money(st.xp)}</b></span></div>
+    ${stretchBanner(i)}
+    ${st.mirror?`<div class="mirror">${st.mirror(S.ans)}</div>`:''}
     ${st.pre?`<p class="sub" style="margin-top:10px">${st.pre}</p>`:''}
     <h2>${st.title}</h2>
     <div class="opts">${st.opts.map(([e,t])=>`<button class="opt"><span class="em">${e}</span><span class="tx">${t}</span></button>`).join('')}</div>
+    ${st.teaser?teaserCard():''}
   </section>`);
   const all=[...n.querySelectorAll('.opt')];all.forEach((b,k)=>b.onclick=()=>onPick(st,b,k,all));
   return n;
 },
-grid(st){
+grid(st,i){
   const n=el(`<section>
     <div class="qmeta"><span>NIVEL ${st.level} DE ${LEVELS}</span><span>Premio: <b>🪙 +${money(st.xp)}</b></span></div>
+    ${stretchBanner(i)}
+    ${st.mirror?`<div class="mirror">${st.mirror(S.ans)}</div>`:''}
     <h2>${st.title}</h2>
     <div class="grid">${st.opts.map(([e,t],k)=>`<button class="card-opt"><div class="ph">${e}${img(CONFIG.painImages[k]||'')}</div><div class="cap">${t}</div></button>`).join('')}</div>
   </section>`);
