@@ -584,7 +584,7 @@ q(st){
     <div class="qmeta"><span>NIVEL ${st.level} DE ${LEVELS}</span><span>Premio: <b>🪙 +${money(st.xp)}</b></span></div>
     ${st.pre?`<p class="sub" style="margin-top:10px">${st.pre}</p>`:''}
     <h2>${st.title}</h2>
-    <div class="opts">${st.opts.map(([e,t])=>`<button class="opt"><span class="em">${e}</span><span class="tx">${t}</span><span class="xpb">+${money(st.xp)}</span></button>`).join('')}</div>
+    <div class="opts">${st.opts.map(([e,t])=>`<button class="opt"><span class="em">${e}</span><span class="tx">${t}</span></button>`).join('')}</div>
   </section>`);
   const all=[...n.querySelectorAll('.opt')];all.forEach((b,k)=>b.onclick=()=>onPick(st,b,k,all));
   return n;
