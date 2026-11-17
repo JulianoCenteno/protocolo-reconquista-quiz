@@ -54,7 +54,7 @@ img{max-width:100%;display:block}
 .hud.hide{display:none}
 
 /* ---------- Screens ---------- */
-.screen{display:none;padding-top:14px;animation:in .45s cubic-bezier(.2,.8,.2,1)}
+.screen{display:none;padding-top:14px;animation:in .8s cubic-bezier(.2,.8,.2,1)}
 .screen.on{display:block}
 .kicker{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--red);background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);padding:5px 10px;border-radius:999px}
 .kicker.gold{color:var(--gold);background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.3)}
@@ -266,7 +266,7 @@ h2{font-size:23px;font-weight:800;margin:12px 0 8px}
     <div class="hud-row">
       <div class="brand" id="brand"></div>
       <div class="chips">
-        <div class="chip xp" id="xpChip">⚡ <span id="xp">0</span> XP</div>
+        <div class="chip xp" id="xpChip">🪙 <span id="xp">$0,00</span></div>
         <div class="chip" id="lvChip">Nv <span id="lv">1</span>/6</div>
         <button class="mute" id="mute" aria-label="Sonido">🔊</button>
       </div>
@@ -448,11 +448,12 @@ function setLevel(l){
   document.querySelectorAll('.link i').forEach((li,k)=>li.style.width=(k+2<=l?'100%':'0'));
   $('#lv').textContent=Math.min(l,LEVELS);
 }
+const money=n=>'$'+(n/10).toFixed(2).replace('.',',');
 function addXP(n,from){
   const start=S.xp;S.xp+=n;const t0=performance.now();
-  (function tick(t){const k=Math.min(1,(t-t0)/600);$('#xp').textContent=Math.round(start+n*k);if(k<1)requestAnimationFrame(tick)})(t0);
+  (function tick(t){const k=Math.min(1,(t-t0)/600);$('#xp').textContent=money(Math.round(start+n*k));if(k<1)requestAnimationFrame(tick)})(t0);
   $('#xpChip').classList.remove('bump');void $('#xpChip').offsetWidth;$('#xpChip').classList.add('bump');
-  if(from){const r=from.getBoundingClientRect();const f=el(`<div class="float-xp">+${n} XP</div>`);f.style.left=(r.right-80)+'px';f.style.top=(r.top)+'px';document.body.appendChild(f);setTimeout(()=>f.remove(),1000)}
+  if(from){const r=from.getBoundingClientRect();sfx.coin();const f=el(`<div class="float-xp">🪙 +${money(n)}</div>`);f.style.left=(r.right-80)+'px';f.style.top=(r.top)+'px';document.body.appendChild(f);setTimeout(()=>f.remove(),1000)}
 }
 let toastQ=Promise.resolve();
 function badge(icon,text){
@@ -486,7 +487,7 @@ function onPick(st,btn,idx,all){
   btn.classList.add('pick');sfx.pick();
   S.ans[st.id]=idx;addXP(st.xp||40,btn);
   if(st.badge)badge(...st.badge);
-  setTimeout(next,750);
+  setTimeout(next,1400);
 }
 
 /* ===================== RENDERERS ===================== */
@@ -496,9 +497,9 @@ intro(){
     <div class="hero-badge">❤️‍🔥</div>
     <div style="margin-top:18px"><span class="kicker">🎮 Misión Reconquista · 6 niveles</span></div>
     <h1>¿Quieres saber qué es lo que <span class="hl">ella realmente quiere</span> para volver contigo… pero que <span class="u">nunca va a admitir</span>?</h1>
-    <p class="sub">Responde 6 preguntas rápidas, sube de nivel y desbloquea tu <b style="color:#fff">Protocolo Personalizado</b> + un cofre con 7 recompensas.</p>
+    <p class="sub">Responde 6 preguntas, gana <b style="color:var(--gold)">dólares</b> en cada nivel y desbloquea tu <b style="color:#fff">Protocolo Personalizado</b> + un cofre con 7 recompensas.</p>
     <div class="perks">
-      <div class="perk"><b>⏱️</b>2 minutos</div>
+      <div class="perk"><b>🪙</b>Gana dólares</div>
       <div class="perk"><b>🧩</b>Diagnóstico personal</div>
       <div class="perk"><b>🎁</b>7 recompensas</div>
     </div>
@@ -507,22 +508,22 @@ intro(){
     <p class="counter" style="margin-top:6px;font-size:12px">🔊 Sube el volumen: esta experiencia tiene sonido</p>
     <p class="counter" style="margin-top:10px">🔥 <b>${CONFIG.socialCount.toLocaleString('de-DE')}</b> hombres ya completaron la misión</p>
   </section>`);
-  n.querySelectorAll('.opt').forEach((b,k)=>b.onclick=()=>{S.ans.intro=k;b.classList.add('pick');sfx.pick();sfx.whoosh();buildHud();$('#hud').classList.remove('hide');addXP(25);setTimeout(next,450)});
+  n.querySelectorAll('.opt').forEach((b,k)=>b.onclick=()=>{S.ans.intro=k;b.classList.add('pick');sfx.pick();sfx.whoosh();setTimeout(startMission,500)});
   return n;
 },
 q(st){
   const n=el(`<section>
-    <div class="qmeta"><span>NIVEL ${st.level} DE ${LEVELS}</span><span>Recompensa: <b>+${st.xp} XP</b></span></div>
+    <div class="qmeta"><span>NIVEL ${st.level} DE ${LEVELS}</span><span>Premio: <b>🪙 +${money(st.xp)}</b></span></div>
     ${st.pre?`<p class="sub" style="margin-top:10px">${st.pre}</p>`:''}
     <h2>${st.title}</h2>
-    <div class="opts">${st.opts.map(([e,t])=>`<button class="opt"><span class="em">${e}</span><span class="tx">${t}</span><span class="xpb">+${st.xp}</span></button>`).join('')}</div>
+    <div class="opts">${st.opts.map(([e,t])=>`<button class="opt"><span class="em">${e}</span><span class="tx">${t}</span><span class="xpb">+${money(st.xp)}</span></button>`).join('')}</div>
   </section>`);
   const all=[...n.querySelectorAll('.opt')];all.forEach((b,k)=>b.onclick=()=>onPick(st,b,k,all));
   return n;
 },
 grid(st){
   const n=el(`<section>
-    <div class="qmeta"><span>NIVEL ${st.level} DE ${LEVELS}</span><span>Recompensa: <b>+${st.xp} XP</b></span></div>
+    <div class="qmeta"><span>NIVEL ${st.level} DE ${LEVELS}</span><span>Premio: <b>🪙 +${money(st.xp)}</b></span></div>
     <h2>${st.title}</h2>
     <div class="grid">${st.opts.map(([e,t],k)=>`<button class="card-opt"><div class="ph">${e}${img(CONFIG.painImages[k]||'')}</div><div class="cap">${t}</div></button>`).join('')}</div>
   </section>`);
@@ -657,7 +658,7 @@ offer(){
   const n=el(`<section>
     <div class="center"><span class="kicker" style="color:var(--green);border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.08)">✅ Protocolo generado con éxito</span>
     <h2 style="margin-top:12px">¡Tu protocolo para recuperar a tu ex en <span class="hl">hasta 1 semana</span> está listo!</h2>
-    <p class="sub">Perfil <b style="color:#fff">${p.name}</b> · Índice <b style="color:var(--green)">${p.score}%</b> · <b style="color:var(--gold)">${S.xp} XP</b></p></div>
+    <p class="sub">Perfil <b style="color:#fff">${p.name}</b> · Índice <b style="color:var(--green)">${p.score}%</b> · <b style="color:var(--gold)">🪙 ${money(S.xp)}</b></p></div>
     <div class="video">${CONFIG.vslEmbed||`<div class="ph"><b>▶</b>Mira el vídeo para ver cómo acceder<br>a tu protocolo personalizado 👇</div>`}</div>
     <a class="cta pulse" data-checkout>¡Quiero mi protocolo personalizado!</a>
     <div id="rest">
@@ -739,6 +740,21 @@ offer(){
 };
 
 function wireCheckout(root){root.querySelectorAll('[data-checkout]').forEach(a=>{a.href=checkoutHref();a.target='_top';a.onclick=()=>track('checkout')})}
+
+function startMission(){
+  const box=$('#screens');box.innerHTML='';
+  const n=el(`<section class="screen on center" style="padding-top:22vh">
+    <div class="hero-badge" style="width:80px;height:80px;font-size:38px">🎮</div>
+    <h2 style="margin-top:18px">Preparando tu misión…</h2>
+    <p class="sub" id="ldTx">Cargando tu diagnóstico personalizado</p>
+    <div class="stat" style="max-width:280px;margin:18px auto 0"><div class="bar" style="height:10px"><i id="ldB" style="background:linear-gradient(90deg,var(--red),var(--gold));transition:width 2.4s cubic-bezier(.4,0,.2,1)"></i></div></div>
+    <p class="counter" style="margin-top:14px">🪙 Ganarás dólares en cada respuesta</p>
+  </section>`);
+  box.appendChild(n);sfx.question();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>n.querySelector('#ldB').style.width='100%'));
+  setTimeout(()=>{n.querySelector('#ldTx').textContent='¡Listo! Empezando nivel 1';sfx.coin()},1700);
+  setTimeout(()=>{buildHud();$('#hud').classList.remove('hide');next();setTimeout(()=>addXP(25,$('#xpChip')),600)},2700);
+}
 
 /* ---------- perfil personalizado ---------- */
 function profile(){
